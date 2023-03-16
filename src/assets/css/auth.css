@@ -1,0 +1,422 @@
+.lssman-auth {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: cover;
+  position: relative;
+  min-height: 100vh;
+  z-index: 1;
+  padding: 50px 0 20px;
+}
+
+.lssman-auth .fxt-checkbox-area {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+.lssman-auth .lssman-_r-content {
+  padding-top: 40px;
+  padding-bottom: 15px;
+  padding-right: 70px;
+  margin-right: 100px;
+}
+
+@media only screen and (max-width: 991px) {
+  .lssman-auth .lssman-_r-content {
+    padding-right: 0;
+    margin-right: 0;
+    margin-top: 40px;
+    border-right: 0;
+    padding-bottom: 0;
+  }
+}
+
+.lssman-auth .lssman-_r-content h1 {
+  font-family: "Source Serif Pro", serif !important;
+  font-size: 45px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.lssman-auth .lssman-_r-content h2 {
+  font-size: 20px;
+  color: #fff;
+}
+
+.lssman-auth .lssman-_r-content label {
+  font-size: 14px;
+  color: #fff;
+}
+
+@media only screen and (max-width: 991px) {
+  .lssman-auth .lssman-_r-content h2 {
+    text-align: center;
+  }
+
+  .lssman-auth .lssman-_r-content label {
+    text-align: center;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .lssman-auth .lssman-_r-content h2 {
+    text-align: left;
+  }
+
+  .lssman-auth .lssman-_r-content label {
+    text-align: left;
+  }
+}
+
+.lssman-auth .lssman-_r-header {
+  text-align: center;
+}
+
+.lssman-auth .fxt-logo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+}
+
+.lssman-auth .fxt-logo img {
+  position: relative;
+  z-index: 2;
+}
+
+.lssman-auth .fxt-logo svg {
+  position: relative;
+  z-index: 2;
+}
+
+.lssman-auth .fxt-form {
+  margin-top: 30px;
+}
+
+.lssman-auth .fxt-form .form-group {
+  position: relative;
+  z-index: 1;
+}
+
+.lssman-auth .fxt-form .form-control {
+  min-height: 40px !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  border: 1px solid #fff !important;
+  background-color: #fff !important;
+  color: #000000 !important;
+  width: 100% !important;
+  padding: 9px 20px !important;
+  text-align: left !important;
+  -webkit-transition: all 0.3s ease !important;
+  transition: all 0.3s ease !important;
+  margin-bottom: 14px !important;
+}
+
+.lssman-auth .fxt-form input::-webkit-input-placeholder {
+  color: #70787a;
+  font-size: 18px;
+  font-weight: 300;
+}
+
+.lssman-auth .fxt-form input::-moz-placeholder {
+  color: #70787a;
+  font-size: 18px;
+  font-weight: 300;
+}
+
+.lssman-auth .fxt-form input:-moz-placeholder {
+  color: #70787a;
+  font-size: 18px;
+  font-weight: 300;
+}
+
+.lssman-auth .fxt-form input:-ms-input-placeholder {
+  color: #70787a;
+  font-size: 18px;
+  font-weight: 300;
+}
+
+.lssman-auth .fxt-btn-fill {
+  cursor: pointer;
+  display: inline-block;
+  font-size: 17px;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  outline: none;
+  border: 0;
+  color: #fff;
+  border-radius: 0.25rem;
+  background-color: #2793ff;
+  padding: 3px 5px !important;
+  margin-bottom: 10px;
+  width: 70px;
+  -webkit-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+.lssman-auth .fxt-btn-fill.reset-_btn {
+  width: 150px !important;
+}
+
+.lssman-auth .fxt-btn-fill:hover,
+.lssman-auth .fxt-btn-fill:focus,
+.lssman-auth .fxt-btn-fill:active {
+  background-color: #fff;
+  border-color: #2793ff;
+  color: #2793ff;
+}
+
+.lssman-auth .fxt-btn-fill:focus {
+  outline: none;
+}
+
+.lssman-auth .switcher-text {
+  color: #fff;
+  margin-bottom: 5px;
+  font-size: 15px;
+  display: block;
+  -webkit-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+.lssman-auth .switcher-text:hover {
+  color: #e6e6e6;
+}
+
+.lssman-auth .switcher-text2 {
+  color: #fff;
+  font-size: 15px;
+  display: inline-block;
+  -webkit-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+.lssman-auth .switcher-text2.inline-text {
+  margin-left: 3px;
+}
+
+.lssman-auth .switcher-text2:hover {
+  color: #e6e6e6;
+}
+
+.lssman-auth .fxt-footer {
+  text-align: center;
+}
+
+.lssman-auth .fxt-footer p {
+  color: #fff;
+}
+
+@media only screen and (min-device-width: 760px) and (max-device-width: 1023px) and (orientation: portrait) {
+  /* For portrait layouts only */
+  .lssman-auth .hidden-_xs {
+    display: block;
+  }
+
+  .lssman-auth .hidden-_xl {
+    display: none;
+  }
+
+  .fxt-logo svg {
+    width: 280px;
+  }
+}
+
+@media only screen and (min-device-width: 481px) and (max-device-width: 815px) and (orientation: landscape) {
+  /* For portrait layouts only */
+  .lssman-auth .hidden-_xs {
+    display: block;
+  }
+
+  .lssman-auth .hidden-_xl {
+    display: none;
+  }
+
+  .fxt-logo svg {
+    width: 150px;
+  }
+}
+
+@media only screen and (max-width: 748px) {
+  .fxt-logo img {
+    width: 150px;
+  }
+
+  .fxt-logo svg {
+    width: 150px;
+  }
+
+  .lssman-auth .fxt-form .form-control {
+    min-height: 35px;
+  }
+
+  .lssman-auth .fxt-logo {
+    max-width: 200px;
+  }
+}
+
+.get-inside-logo {
+  width: 200px;
+  margin-bottom: 40px;
+}
+
+.fxt-logo .cls-1 {
+  fill: #fff;
+}
+
+.fxt-logo .cls-2 {
+  fill: #2793ff !important;
+}
+
+/* NEW AUTH */
+/* NEW AUTH */
+/* NEW AUTH */
+/* NEW AUTH */
+/* NEW AUTH */
+/* NEW AUTH */
+/* NEW AUTH */
+/* NEW AUTH */
+/* NEW AUTH */
+/* NEW AUTH */
+/* NEW AUTH */
+/* NEW AUTH */
+/* NEW AUTH */
+/* NEW AUTH */
+
+.n_auth__section {
+  min-height: calc(100vh - 180px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.n_auth__container {
+  max-width: 850px;
+  text-align: left;
+}
+
+.n__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 70px;
+  padding: 0 40px;
+  width: 100%;
+}
+
+.auth_hero_img {
+  margin-bottom: 50px;
+}
+
+.n_auth__container h1 {
+  font-weight: 700 !important;
+  font-size: 72px !important;
+  line-height: 91px !important;
+  color: #4ad3c9 !important;
+  margin-bottom: 70px;
+}
+
+.n_auth__container p.auth_desc {
+  font-weight: 400 !important;
+  font-size: 24px !important;
+  line-height: 33px !important;
+  color: #1e1e1e !important;
+  margin-bottom: 20px !important;
+}
+
+.n_auth__container p.n_terms {
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  line-height: 17px !important;
+  color: #71777a !important;
+  margin-top: 50px !important;
+}
+
+.n_auth__container p.n_terms a {
+  color: #1e1e1e !important;
+  text-decoration: none;
+  font-weight: 600 !important;
+}
+
+.n_auth_form {
+  margin-top: 40px !important;
+  max-width: 520px;
+}
+
+.n_auth_form button {
+  min-width: 165px;
+  min-height: 45px;
+}
+
+.n_auth_form input.n_input {
+  width: 100%;
+  height: 45px;
+  border-color: #ededed;
+  margin-bottom: 20px;
+}
+
+a.n__link {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 18px;
+  color: #1e1e1e;
+  margin-bottom: 60px;
+  display: block;
+  margin-top: -10px;
+  margin-left: 10px;
+}
+
+.custom-select.dash_-language-select {
+  background-color: transparent;
+  border: none;
+  height: auto;
+  max-width: 75px;
+  position: relative;
+  font-weight: 600;
+  color: #1e1e1e;
+  font-size: 1.3rem;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  -ms-word-break: normal;
+  word-break: normal;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  z-index: 99999;
+  background: #ffffff00 url("/assets/images/svg-icons/arrow-down.svg") no-repeat
+    right 0.15rem center/25px 10px;
+}
+
+.custom-select.dash_-language-select::-ms-expand {
+  display: none !important;
+}
+
+.custom-select.dash_-language-select:hover,
+.custom-select.dash_-language-select:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}

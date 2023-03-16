@@ -1,0 +1,270 @@
+image: node
+clone:
+  depth: full
+
+definitions:
+  services:
+    docker:
+      memory: 2048
+  caches:
+    apk: /var/cache/apk
+    sonar: ~/.sonar/cache
+    terraform: .terraform
+
+  steps:
+    - step: &branch-environment
+        name: Branch Environment
+        artifacts:
+          - environment.sh
+
+    - step: &setup-environment
+        name: Setup Environment
+        script:
+          - echo export AWS_DEFAULT_REGION=eu-west-1 >> environment.sh
+          - echo export APP_VERSION=$(cat CHANGELOG.md | egrep -m 1 "\#\# \[([0-9]+\.[0-9]+\.[0-9]+)\]" | egrep -o "[0-9]+\.[0-9]+\.[0-9]+").$BITBUCKET_BUILD_NUMBER >> environment.sh
+        artifacts:
+          - environment.sh
+
+    - step: &check-version
+        name: Check Version
+        script:
+          - git fetch -t
+          - export tag_version=$(git for-each-ref --format '%(refname)' refs/tags | cut -d'/' -f 3 | sort -rV | head -n 1)
+          - export changelog_version=$(cat CHANGELOG.md | egrep -m 1 "\#\# \[([0-9]+\.[0-9]+\.[0-9]+)\]" | egrep -o "[0-9]+\.[0-9]+\.[0-9]+")
+          - echo tag_version=$tag_version changelog_version=$changelog_version
+          - if [ "$tag_version" == "$changelog_version" ]; then echo NO NEW CHANGELOG ENTRY IN PLACE && exit 1; fi
+          - if [ "$tag_version" == "$(printf '%s\n' "$changelog_version" "$tag_version" | sort -Vr | head -n1)" ]; then echo LATEST CHANGELOG ENTRY NOT HIGHEST VERSION && exit 1; fi
+
+    - step: &create-tag
+        name: Create-Tag
+        script:
+          - git tag $(cat CHANGELOG.md | egrep -m 1 "\#\# \[([0-9]+\.[0-9]+\.[0-9]+)\]" | egrep -o "[0-9]+\.[0-9]+\.[0-9]+")
+          - git push origin --tags
+
+    - step: &tf-plan
+        name: TF Plan
+        image: hashicorp/terraform:0.13.5
+        caches:
+          - terraform
+        script:
+          - source environment.sh
+          - terraform init
+          - terraform plan -input=false
+
+    - step: &lint
+        name: Lint
+        caches:
+          - node
+        script:
+          - npm ci
+          - npm run lint || true
+        artifacts:
+          - test-reports/eslint.json
+
+    - step: &test
+        name: Test
+        caches:
+          - node
+          - apk
+        script:
+          - npm ci
+          - npm run test -- --passWithNoTests
+        artifacts:
+          - coverage/coverage-final.json
+          - coverage/lcov.info
+
+    - step: &sonar-analysis
+        name: Sonar Analysis
+        image: bash:5.0
+        caches:
+          - sonar
+        script:
+          - source environment.sh
+          - pipe: sonarsource/sonarcloud-scan:1.2.1
+            variables:
+              DEBUG: "true"
+              EXTRA_ARGS: "-Dsonar.branch.name=$BITBUCKET_BRANCH"
+
+    - step: &deploy-infra
+        name: Deploy Infrastructure
+        image: hashicorp/terraform:0.13.5
+        caches:
+          - apk
+          - terraform
+        script:
+          - source environment.sh
+          - terraform init
+          - terraform output > .env.local
+        artifacts:
+          - .env.local
+
+    - step: &build
+        name: Build
+        size: 2x
+        caches:
+          - node
+          - apk
+        script:
+          - source environment.sh
+          - npm ci --production
+          - CI=false npm run build
+        artifacts:
+          - build/**
+
+    - step: &build-demo
+        name: Build
+        size: 2x
+        caches:
+          - node
+          - apk
+        script:
+          - source environment.sh
+          - mv .env.demo.local .env.local
+          - npm ci --production
+          - CI=false npm run build
+          - mv build build-demo
+        artifacts:
+          - build-demo/**
+
+    - step: &deploy-app
+        name: Deploy App
+        image: amazon/aws-cli
+        script:
+          - source environment.sh
+          - export $(cat .env.local | sed 's/ //g')
+          - $(aws sts assume-role --role-arn arn:aws:iam::$ACCOUNT_ID:role/Deployment --role-session-name bitbucket_${BITBUCKET_REPO_SLUG}_${BITBUCKET_BUILD_NUMBER} --query 'Credentials.[`export#AWS_ACCESS_KEY_ID=`,AccessKeyId,`#AWS_SECRET_ACCESS_KEY=`,SecretAccessKey,`#AWS_SESSION_TOKEN=`,SessionToken]' --output text | sed 's/\t//g' | sed 's/#/ /g')
+          - if [ -z "$AWS_SECRET_ACCESS_KEY" ]; then echo UNABLE TO ASSUME && exit 1; fi
+          - aws s3 sync build s3://leesman-index-ao-frontend-${ENVIRONMENT}/dashboards
+          - echo "" > .env.local
+        artifacts:
+          - .env.local
+
+    - step: &deploy-infra-demo
+        name: Deploy Infrastructure
+        image: hashicorp/terraform:0.13.5
+        caches:
+          - apk
+          - terraform
+        script:
+          - source environment.sh
+          - export ACCOUNT_ID=695212533175
+          - export ENVIRONMENT=demo
+          - export TF_WORKSPACE=demo
+          - terraform init
+          - terraform output > .env.demo.local
+        artifacts:
+          - .env.demo.local
+
+    - step: &deploy-app-demo
+        name: Deploy App
+        image: amazon/aws-cli
+        script:
+          - source environment.sh
+          - export ACCOUNT_ID=695212533175
+          - export ENVIRONMENT=demo
+          - export TF_WORKSPACE=demo
+          - export $(cat .env.demo.local | sed 's/ //g')
+          - $(aws sts assume-role --role-arn arn:aws:iam::$ACCOUNT_ID:role/Deployment --role-session-name bitbucket_${BITBUCKET_REPO_SLUG}_${BITBUCKET_BUILD_NUMBER} --query 'Credentials.[`export#AWS_ACCESS_KEY_ID=`,AccessKeyId,`#AWS_SECRET_ACCESS_KEY=`,SecretAccessKey,`#AWS_SESSION_TOKEN=`,SessionToken]' --output text | sed 's/\t//g' | sed 's/#/ /g')
+          - if [ -z "$AWS_SECRET_ACCESS_KEY" ]; then echo UNABLE TO ASSUME && exit 1; fi
+          - aws s3 sync build-demo s3://leesman-index-ao-frontend-${ENVIRONMENT}/dashboards
+          - echo "" > .env.demo.local
+        artifacts:
+          - .env.demo.local
+
+pipelines:
+  default:
+    - step: *setup-environment
+    - step:
+        <<: *branch-environment
+        script:
+          - echo export ACCOUNT_ID=836263696447  >> environment.sh
+          - echo export ENVIRONMENT=development >> environment.sh
+          - echo export TF_WORKSPACE=development >> environment.sh
+    - parallel:
+        - step: *tf-plan
+        - step: *lint
+        - step: *test
+    - step: *build
+    # - step: *sonar-analysis
+
+  branches:
+    master:
+      - step: *setup-environment
+      - step:
+          <<: *branch-environment
+          script:
+            - echo export ACCOUNT_ID=867213857120 >> environment.sh
+            - echo export ENVIRONMENT=production >> environment.sh
+            - echo export TF_WORKSPACE=production >> environment.sh
+      - parallel:
+          - step: *tf-plan
+          - step: *lint
+          - step: *test
+      # - step: *sonar-analysis
+      - parallel:
+          - step:
+              <<: *deploy-infra
+              name: Deploy Prod Infrastructure
+              deployment: Production
+              trigger: manual
+          - step:
+              <<: *deploy-infra-demo
+              name: Deploy Demo Infrastructure
+              deployment: Demo
+              trigger: manual
+      - parallel:
+          - step: *build
+          - step: *build-demo
+      - parallel:
+          - step:
+              <<: *deploy-app
+              name: Deploy Production App
+          - step:
+              <<: *deploy-app-demo
+              name: Deploy Demo App
+      - step: *create-tag
+
+    "{release/*,hotfix/*}":
+      - step: *check-version
+      - step: *setup-environment
+      - step:
+          <<: *branch-environment
+          script:
+            - echo export ACCOUNT_ID=395526924801  >> environment.sh
+            - echo export ENVIRONMENT=staging >> environment.sh
+            - echo export TF_WORKSPACE=staging >> environment.sh
+      - parallel:
+          - step: *tf-plan
+          - step: *lint
+          - step: *test
+      # - step: *sonar-analysis
+      - step:
+          <<: *deploy-infra
+          name: Deploy Staging Infrastructure
+          deployment: Staging
+      - step: *build
+      - step:
+          <<: *deploy-app
+          name: Deploy Staging App
+
+    develop:
+      - step: *setup-environment
+      - step:
+          <<: *branch-environment
+          script:
+            - echo export ACCOUNT_ID=836263696447  >> environment.sh
+            - echo export ENVIRONMENT=development >> environment.sh
+            - echo export TF_WORKSPACE=development >> environment.sh
+      - parallel:
+          - step: *tf-plan
+          - step: *lint
+          - step: *test
+      # - step: *sonar-analysis
+      - step:
+          <<: *deploy-infra
+          name: Deploy Development Infrastructure
+          deployment: Development
+      - step: *build
+      - step:
+          <<: *deploy-app
+          name: Deploy Development App

@@ -1,0 +1,16 @@
+import React from "react"
+import { Spin } from "antd"
+import { LoadingOutlined } from "@ant-design/icons"
+
+const antIcon = <LoadingOutlined style={{ fontSize: 45 }} spin />
+
+export default function LoaderLarge() {
+  return (
+    <div className="loader-_large">
+      <div className="loader-_large-div">
+        <div className="bt-spinner"></div>
+        {/* <Spin size="large" indicator={antIcon} /> */}
+      </div>
+    </div>
+  )
+}

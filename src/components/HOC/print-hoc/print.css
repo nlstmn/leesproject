@@ -1,0 +1,837 @@
+@page {
+  size: A4 landscape !important;
+  margin: 0mm !important;
+}
+
+@media print {
+  @page {
+    size: A4 landscape !important;
+    margin: 0mm !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  .calc-_sidebar {
+    display: none !important;
+  }
+
+  body.hoc-bg #main-content {
+    width: 100% !important;
+  }
+
+  header,
+  footer,
+  aside,
+  nav,
+  form,
+  iframe,
+  .menu,
+  .hero,
+  .adslot {
+    display: none !important;
+  }
+
+  body {
+    margin: 0 !important;
+    color: rgb(0, 0, 0) !important;
+    background: #fff !important;
+    background-color: #fff !important;
+    font-weight: 400 !important;
+    font-family: "Source Sans Pro", Arial, Helvetica, sans-serif !important;
+    letter-spacing: 0 !important;
+    -webkit-text-size-adjust: 100% !important;
+    line-height: 1.3 !important;
+  }
+
+  .printable_page {
+    page-break-after: always !important;
+    position: relative !important;
+    background: white;
+    max-width: 297mm !important;
+    width: 297mm !important;
+    max-height: 210mm;
+    height: 210mm;
+    margin: auto;
+    padding-right: 8mm !important;
+  }
+
+  .printable_page.bg-_black {
+    background: rgb(0, 0, 0) !important;
+  }
+
+  .loader-_large.hoc__loader.generating {
+    display: none !important;
+  }
+
+  body.hoc-bg h1.printh.main--title {
+    font-weight: bold !important;
+    font-family: "Source Serif Pro", "Bookman Old Style", serif !important;
+  }
+
+  h1.printh.main--title {
+    font-weight: bold !important;
+    font-family: "Source Serif Pro", "Bookman Old Style", serif !important;
+  }
+}
+
+body.print-_bg {
+  margin: 0 !important;
+  color: rgb(0, 0, 0) !important;
+  background: #fff !important;
+  background-color: #fff !important;
+  font-weight: 400 !important;
+  font-family: "Source Sans Pro", Arial, Helvetica, sans-serif !important;
+  letter-spacing: 0 !important;
+  -webkit-text-size-adjust: 100% !important;
+  line-height: 1.3 !important;
+  -webkit-print-color-adjust: exact !important;
+  color-adjust: exact !important;
+}
+
+body.print-_bg .apexcharts-yaxis-title text,
+body.print-_bg .apexcharts-text tspan,
+body.print-_bg .apexcharts-graphical text,
+body.print-_bg .apexcharts-legend-text,
+body.print-_bg .apexcharts-datalabels text,
+body.print-_bg .apexcharts-yaxis-title .apexcharts-yaxis-title-text {
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+.printable_page .border-right {
+  border-right: none !important;
+  position: relative;
+  border-color: transparent !important;
+}
+
+.printable_page .border-right.vv::after {
+  content: "";
+  background-image: url(./icons/line.svg);
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 100%;
+  width: 10px !important;
+  max-width: 10px !important;
+  min-height: 10mm;
+  background-repeat: no-repeat;
+}
+
+.printable_page .border-right.ll::after {
+  content: "";
+  background-image: url(./icons/line.svg);
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 100%;
+  width: 10px !important;
+  max-width: 10px !important;
+  min-height: 10mm;
+  background-repeat: no-repeat;
+}
+
+.printable_page .hwa-__items .hwa-item_c {
+  min-width: 30% !important;
+}
+
+.printable_page {
+  page-break-after: always !important;
+  position: relative !important;
+  background: white;
+  max-width: 297mm !important;
+  width: 297mm !important;
+  max-height: 210mm;
+  height: 210mm;
+  margin: auto;
+  padding-right: 8mm !important;
+}
+
+.row.ghh .pdc {
+  padding-left: 8mm !important;
+}
+
+.printable_page.bg-_black {
+  background: rgb(0, 0, 0) !important;
+}
+
+h1.printh {
+  font-size: 44px;
+  font-weight: 600;
+  color: black;
+  line-height: 1.17;
+  margin-left: 8mm;
+}
+
+h2.printh {
+  font-size: 25px;
+  font-weight: 600;
+  color: black;
+  margin-left: 8mm;
+}
+
+.printable_page.bg-_black h2.printh {
+  color: rgb(255, 255, 255) !important;
+  margin-left: 8mm;
+}
+
+h3.printh {
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  color: black !important;
+  margin-left: 8mm;
+}
+h3.printh-chart {
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  color: black !important;
+}
+h3.printh.kk {
+  font-size: 14px !important;
+}
+
+h4.printh {
+  font-weight: 500 !important;
+  font-size: 17px !important;
+  color: black !important;
+}
+
+h5.printh {
+  font-size: 1.2rem !important;
+  margin-bottom: 0 !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  color: black !important;
+}
+
+p.printh {
+  color: black !important;
+}
+body.hoc-bg p.printh {
+  margin-bottom: 5px !important;
+}
+.printable_page.bg-_black p.printh,
+.printable_page.bg-_black p.printh a {
+  color: rgb(255, 255, 255) !important;
+  text-decoration: none !important;
+}
+
+p.printh.fxl {
+  font-size: 19px !important;
+}
+
+p.printh.fxxl {
+  font-size: 32px !important;
+}
+
+p.printh span {
+  font-weight: 300 !important;
+  font-size: 20px !important;
+  line-height: 1.2;
+  display: block;
+}
+
+p.printh.fxxl span {
+  font-size: 26px !important;
+  line-height: 1.2;
+  display: block;
+  margin-left: 8mm;
+}
+
+p.printh span.xss {
+  font-size: 15px !important;
+  line-height: 1.2 !important;
+  display: block;
+  margin-left: 8mm;
+}
+
+p.printh.jj {
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+}
+
+p.printh span.xss.ff {
+  font-size: 11px !important;
+  line-height: 1.5 !important;
+  display: inline;
+  margin-left: 0 !important;
+}
+
+p.pdf-_copy {
+  font-size: 12px !important;
+  color: #3f3f3f !important;
+  position: absolute;
+  left: 15px;
+  bottom: 15px;
+  text-align: left;
+  z-index: 99;
+  margin-bottom: 0 !important;
+}
+body.hoc-bg p.pdf-_copy {
+  margin-bottom: 0 !important;
+}
+
+p.pdf-_copy small {
+  font-size: 40% !important;
+}
+
+p.pbtn a {
+  background-color: #019bdc;
+  padding: 10px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 45mm;
+  text-align: center;
+  line-height: normal;
+  margin-top: 63px;
+  font-weight: 500;
+  margin-left: 8mm;
+}
+
+body.hoc-bg p.printh.fxl.pbtn span,
+body.hoc-bg p.printh.fxll.pbtn span {
+  font-weight: 500 !important;
+  font-size: 14px;
+}
+
+.l-_logo.main {
+  text-align: left;
+}
+
+.l-_logo.tr {
+  position: absolute;
+  right: 8mm;
+  top: 8mm;
+}
+
+.l-_logo.main img {
+  max-width: 130px !important;
+  margin-left: 8mm;
+}
+
+.l-_logo.tr img {
+  max-width: 100px !important;
+}
+
+body.hoc-bg h1.printh {
+  margin-top: 30px;
+  font-size: 2.5rem !important;
+  line-height: 1.2 !important;
+  font-weight: 600 !important;
+}
+
+body.hoc-bg p.printh.mb5 {
+  margin-bottom: 5px !important;
+}
+
+body.hoc-bg p.printh.fxl {
+  font-size: 18px !important;
+}
+
+body.hoc-bg p.printh.fxl span {
+  font-weight: 300 !important;
+  margin-left: 8mm;
+}
+body.hoc-bg p.printh.fxl span.ml-5mm {
+  margin-left: 5mm;
+}
+body.hoc-bg p.printh.fxll span {
+  font-weight: 300 !important;
+}
+body.hoc-bg p.printh.fxl span.xss {
+  font-size: 14px !important;
+  line-height: 1.2 !important;
+  font-weight: bold;
+  display: block;
+}
+/* .fgg .d-flex {
+  margin-left: 4mm;
+}
+.vv .d-flex {
+  margin-left: 10mm;
+} */
+.left-_tht {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.hvw100 {
+  /* height: 100vh; */
+  max-width: 297mm;
+  width: 297mm;
+  max-height: 210mm;
+  height: 210mm;
+}
+
+.hvv100 {
+  height: 100%;
+}
+
+.page-_bg {
+  position: absolute;
+  margin: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.page-_bg img {
+  position: relative;
+  margin: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.print-3-img {
+  height: auto;
+  width: 100%;
+  object-fit: cover;
+}
+
+h3.printh.nn {
+  margin-left: 0 !important;
+}
+
+h3.printh.cxv {
+  margin-top: 10px;
+}
+
+.double-_info {
+  display: flex;
+}
+
+.double-_info .lft-_info,
+.double-_info .rgt-_info {
+  width: 50%;
+}
+
+.double-_info .rgt-_info {
+  padding-left: 30px;
+}
+
+.double-_info .lft-_info {
+  padding-right: 30px;
+  border-right: 1px solid #0000006b;
+}
+
+.print-prg {
+  position: relative;
+}
+
+.print-prg .prg-_icon img {
+  position: absolute;
+  left: 0;
+  width: 40px;
+  height: auto;
+  text-align: left;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin-top: 0px;
+}
+
+.lft-_info.gg .print-prg .prg-_icon img {
+  width: 46px;
+  margin-top: -7px;
+}
+
+.print-_progress {
+  margin-bottom: 30px;
+  padding-left: 60px;
+}
+
+.print-_progress .progress.progress-xs {
+  height: 6px !important;
+  max-width: 215px;
+}
+
+.print-_progress .progress {
+  background-color: #fff !important;
+}
+
+.print-_progress .progress-bar-blue {
+  background-color: #439fde !important;
+}
+
+.pr_infos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.blue-_card {
+  background-color: #f5f6fc;
+  padding: 10px;
+  position: relative;
+}
+
+.col-xl-9.vv {
+  margin-top: -3mm;
+}
+
+.col-xl-3.fff {
+  padding-right: 0.25rem !important;
+}
+
+.col-xl-9.fff {
+  padding-left: 0.25rem !important;
+}
+
+.printable_page .score-title-left {
+  text-align: left !important;
+  font-size: 13px !important;
+  color: #000 !important;
+  font-weight: 300 !important;
+  margin-bottom: 4px !important;
+}
+
+.printable_page .score-title-right {
+  text-align: right !important;
+  font-size: 14px !important;
+  color: #000 !important;
+  font-weight: 300 !important;
+  margin-bottom: -24px !important;
+}
+
+.icon-_infos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.icon-_infos .icon-_info {
+  max-width: 20%;
+  min-width: 20%;
+}
+
+.white--h {
+  position: absolute;
+  height: 100%;
+  left: 150px;
+  top: 0;
+  bottom: 0;
+  width: 0.5rem;
+  color: white;
+  background: white;
+}
+
+.icon-_infos .icon-_info p {
+  color: #000 !important;
+  margin-top: 0 !important;
+  margin-bottom: 10px !important;
+  font-weight: 300 !important;
+  line-height: 1.1 !important;
+  font-size: 10px !important;
+}
+
+.icon-_infos .icon-_info img {
+  max-width: 52px;
+  margin-left: -5px;
+}
+
+span.text-muted.printh {
+  font-size: 12px;
+  line-height: 1.1;
+}
+.flex-_that.printh,
+.blue-_card .h1,
+.blue-_card h4.font-weight-medium,
+.blue-_card .ml-0 span {
+  color: black;
+}
+
+.blue-_card .ml-0 span {
+  line-height: 1;
+  display: block;
+  font-size: 15px;
+}
+
+.lcrr {
+  padding-right: 5px !important;
+}
+
+.mcrr {
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+}
+
+.rcrr {
+  padding-left: 5px !important;
+}
+
+.lcrr .blue-_card,
+.mcrr .blue-_card,
+.rcrr .blue-_card {
+  min-height: 140px;
+}
+
+.body.hoc-bg .printable_page .apexcharts-canvas .apexcharts-gridline,
+.printable_page .apexcharts-canvas .apexcharts-gridline {
+  stroke: #3b3c3c00 !important;
+  display: none !important;
+}
+
+.printable_page .apexcharts-canvas .apexcharts-pie-series path,
+body.hoc-bg .printable_page .apexcharts-canvas .apexcharts-pie-series path {
+  stroke: #f5f6fc !important;
+}
+
+.blue-_card #pie-chart {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 9px !important;
+  width: 100% !important;
+  max-width: 250px !important;
+  margin: auto;
+  max-height: 255px;
+}
+
+.blue-_card #bar-chart {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: -80px !important;
+  width: 100% !important;
+  max-width: 600px !important;
+  margin: auto;
+}
+
+.blue-_card.min-hp {
+  min-height: 309px !important;
+}
+
+.blue-_card.txt-align-bottom {
+  display: flex;
+  flex-direction: column;
+}
+
+.blue-_card.txt-align-bottom .card-_inf {
+  align-self: start;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
+  width: 100%;
+}
+
+.blue-_card.txt-align-bottom .h1,
+.blue-_card.txt-align-bottom .hwa-__items {
+  align-self: flex-end;
+  width: 100%;
+  flex: 0 1 100%;
+}
+
+.blue-_card.txt-align-bottom .h1 {
+  font-weight: 400 !important;
+  font-size: 2.1rem;
+}
+
+body.hoc-bg .blue-_card h4.font-weight-medium,
+body.hoc-bg h4.font-weight-medium {
+  font-weight: 400 !important;
+}
+
+.btvv {
+  position: absolute;
+  bottom: 19mm;
+  width: 100%;
+  z-index: 99;
+  margin-left: 8mm;
+}
+
+body.hoc-bg .col-xl-3.fgg,
+.col-xl-3.fgg {
+  padding-right: -5mm !important;
+  padding-left: -5mm !important;
+  line-height: 3;
+}
+
+span.f-larg,
+body.hoc-bg p.printh.fxl span.f-larg {
+  font-weight: 400 !important;
+}
+
+h3.title-abs {
+  position: absolute;
+  top: 10px;
+  left: 160px;
+}
+p.mw-left {
+  max-width: 319px;
+}
+
+.loader-_large-div.generating {
+  max-width: 600px !important;
+  width: 100% !important;
+  margin-top: -80px;
+}
+
+.loader-_large-div.generating .bt-spinner {
+  margin: auto !important;
+}
+
+.loader-_large.generating {
+  margin-top: -80px !important;
+  height: calc(100% + 80px) !important;
+  min-height: calc(100vh + 80px) !important;
+}
+
+body.hoc-bg h1.pdf-generating {
+  font-size: 20px !important;
+  position: absolute;
+  font-weight: 500 !important;
+  width: 100%;
+  text-align: center;
+  bottom: -165px;
+}
+
+@keyframes blinkdot {
+  0% {
+    opacity: 0.2;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}
+h1.pdf-generating span {
+  animation-name: blinkdot;
+  animation-duration: 1.4s;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+h1.pdf-generating span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+h1.pdf-generating span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+.circle-loader-pdf {
+  margin: auto;
+  left: 0;
+  right: 0;
+  margin-bottom: 3.5em;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-left-color: #449fdd;
+  animation: loader-spin 1.2s infinite linear;
+  position: absolute;
+  display: inline-block;
+  vertical-align: top;
+  border-radius: 50%;
+  width: 7em;
+  height: 7em;
+}
+
+.load-complete {
+  -webkit-animation: none;
+  animation: none;
+  border-color: #449fdd;
+  transition: border 500ms ease-out;
+}
+
+.checkmark-pdf {
+  display: none;
+}
+
+.load-complete .checkmark-pdf {
+  display: block;
+}
+.checkmark-pdf.draw:after {
+  animation-duration: 800ms;
+  animation-timing-function: ease;
+  animation-name: checkmarked;
+  transform: scaleX(-1) rotate(135deg);
+}
+.checkmark-pdf:after {
+  opacity: 1;
+  height: 3.5em;
+  width: 1.75em;
+  transform-origin: left top;
+  border-right: 3px solid #449fdd;
+  border-top: 3px solid #449fdd;
+  content: "";
+  left: 1.75em;
+  top: 3.5em;
+  position: absolute;
+}
+
+@keyframes loader-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes checkmarked {
+  0% {
+    height: 0;
+    width: 0;
+    opacity: 1;
+  }
+  20% {
+    height: 0;
+    width: 1.75em;
+    opacity: 1;
+  }
+  40% {
+    height: 3.5em;
+    width: 1.75em;
+    opacity: 1;
+  }
+  100% {
+    height: 3.5em;
+    width: 1.75em;
+    opacity: 1;
+  }
+}
+.no-scrollitt {
+  overflow: hidden !important;
+}
+
+body.hoc-bg h1.printh.main--title {
+  font-weight: bold !important;
+  font-family: "Source Serif Pro", "Bookman Old Style", serif !important;
+}
+
+.pdf-_viewer {
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100vh !important;
+  min-width: 100vw !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  z-index: 99999999 !important;
+  background-color: #fff;
+}
+
+@media only screen and (max-width: 768px) {
+  .hidden-_mobile {
+    display: none !important;
+  }
+
+  .ml-_mobile.ml-2 {
+    margin-left: 0rem !important;
+  }
+}
