@@ -241,7 +241,7 @@ const CustomFilters = () => {
     {
       title: "Action",
       key: "action",
-      width: "80px",
+      width: "150px",
       render: (_, record) => {
         const action = isAction(record)
         return (

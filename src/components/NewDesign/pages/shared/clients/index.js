@@ -239,7 +239,7 @@ const ClientManagementAdmin = () => {
     {
       title: "Action",
       key: "action",
-      width: "80px",
+      width: "100px",
       render: (text, record) => {
         const action = isAction(record)
         return (

@@ -325,7 +325,7 @@ const SurveysManagement = () => {
     {
       title: "Action",
       key: "action",
-      width: "80px",
+      width: "100px",
       render: (_, record) => {
         const action = isAction(record)
         return (
