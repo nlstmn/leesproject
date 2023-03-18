@@ -2689,7 +2689,7 @@ button.icon__btn.demog span {
 }
 
 .drop__btn.show .drop__menu {
-  display: contents;
+  display: block;
 }
 
 .drop__menu ul {
