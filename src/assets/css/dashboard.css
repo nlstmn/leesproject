@@ -3028,6 +3028,11 @@ button.icon__btn.demog span {
   border-top: 1px solid #ffffff !important;
   border-radius: 0 0 3px 3px;
 }
+.light-dropdown-menu li {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
 
 .n__form_control .dash-dropdown_select ul.options {
   border-left: 1px solid #bfc3c5 !important;
@@ -3071,7 +3076,8 @@ button.icon__btn.demog span {
   font-weight: 600;
   font-size: 13px;
   line-height: 16px;
-  height: 30px;
+  padding-top: 5px;
+  padding-bottom: 5px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -7830,4 +7836,24 @@ ul.translations_tags li.table__type {
   font-size: 18px;
   top: auto;
   bottom: auto;
+}
+
+.dropdown_item {
+  display: flex;
+  justify-content: space-between !important;
+  align-items: center;
+  width: 100%;
+}
+
+.survey_count_badge {
+  color: white;
+  font-size: 10px;
+  background-color: black;
+  padding: 0 10px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50px;
+  justify-self: flex-end;
 }

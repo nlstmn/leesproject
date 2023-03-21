@@ -2,65 +2,91 @@ import { Modal, DatePicker } from "antd"
 import React, { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useForm } from "react-hook-form"
-import { postNewLocation } from "../../../../../../actions/adminActions"
+import {
+  postNewLocation,
+  updateLocation,
+} from "../../../../../../actions/adminActions"
 
 const ModalLocation = ({
   isLocationDrawer,
   setLocationDrawer,
   locationRowData,
   title,
+  isLocationEdit,
+  setLocationEdit,
 }) => {
   const dispatch = useDispatch()
   const selectedClientId = useSelector(
     (store) => store.saveClientIdForSurveys.data
   )
-
   const [isMenu, setMenu] = useState("Locations")
-
-  const [locationsInitialData, setLocationsInitialData] = useState({
-    name: "",
-    language: "en-GB",
-    parentId: null,
-    countryId: null,
-    cityId: null,
-    postCode: null,
-    numberOfFloors: null,
-    targetPopulation: null,
-    occupancyStatus: null,
-    area: null,
-    occupancyMix: "",
-    buildingLocation: "",
-    regionId: null,
-    lat: null,
-    long: null,
-    address: "",
-    dateOrganisationMovedIn: null,
-    buildingStyle: null,
-  })
 
   const {
     register,
     handleSubmit,
-    watch,
+    reset,
     formState: { errors },
-  } = useForm({ defaultValues: locationsInitialData })
+  } = useForm({
+    defaultValues: {
+      name: "",
+      language: "en-GB",
+      parentId: null,
+      countryId: null,
+      cityId: null,
+      postCode: null,
+      numberOfFloors: null,
+      targetPopulation: null,
+      occupancyStatus: null,
+      area: null,
+      occupancyMix: "",
+      buildingLocation: "",
+      regionId: null,
+      lat: null,
+      long: null,
+      address: "",
+      dateOrganisationMovedIn: null,
+      buildingStyle: null,
+    },
+  })
 
   useEffect(() => {
-    setLocationsInitialData((prevState) => ({
-      ...prevState,
-      name: locationsInitialData.label,
-    }))
-  }, [])
+    let backToDefaultVals = {
+      name: isLocationEdit ? locationRowData.label : "",
+      language: "en-GB",
+      regionId: isLocationEdit ? locationRowData.region_id : null,
+      parentId: null,
+      countryId: null,
+      cityId: null,
+      postCode: null,
+      numberOfFloors: null,
+      targetPopulation: null,
+      occupancyStatus: null,
+      area: null,
+      occupancyMix: "",
+      buildingLocation: "",
+      lat: null,
+      long: null,
+      address: "",
+      dateOrganisationMovedIn: null,
+      buildingStyle: null,
+    }
+    reset({ ...backToDefaultVals })
+  }, [locationRowData, isLocationEdit])
 
   return (
     <>
       <Modal
         className="filter_drawer small right_filter"
-        onCancel={() => setLocationDrawer(false)}
+        onCancel={() => {
+          setLocationDrawer(false)
+          console.log("CANCEL BUTTON IS WORKING")
+        }}
         visible={isLocationDrawer}
         closeIcon={
           <button
-            onClick={() => setLocationDrawer(false)}
+            onClick={() => {
+              setLocationDrawer(false)
+            }}
             className="drawer__close"
           >
             <span className="cxv-close-l-icn"></span>
@@ -99,7 +125,9 @@ const ModalLocation = ({
                 className="w-100 row"
                 onSubmit={handleSubmit((data) => {
                   const locationData = { locationData: data }
-                  dispatch(postNewLocation(selectedClientId, locationData))
+                  !isLocationEdit
+                    ? dispatch(postNewLocation(selectedClientId, locationData))
+                    : dispatch(updateLocation(selectedClientId, locationData))
                 })}
               >
                 <div className="col-lg-6">

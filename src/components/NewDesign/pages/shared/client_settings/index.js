@@ -142,7 +142,7 @@ const ClientSettings = () => {
   )
 
   const onClickSave = async () => {
-    if (clientName && clientRefNo && isNewOrEdit) {
+    if (isMenuStoreVal === "Main" && clientName && clientRefNo && isNewOrEdit) {
       dispatch(
         saveClientsMainSettingsAction({
           name: clientName,
@@ -163,7 +163,14 @@ const ClientSettings = () => {
       setSavedMainSettings(true)
       // For clearing this topic: This is edit client because when we are creating new client, we're changing to edit mode...
       dispatch(editClient())
-    } else if (clientName && clientRefNo && !isNewOrEdit) {
+    } else if (
+      isMenuStoreVal === "Main" &&
+      clientName &&
+      clientRefNo &&
+      !isNewOrEdit
+    ) {
+      // When we are in the menu tab and we are updating and client information,
+      // if the fields are not empty apply these rules
       dispatch(
         updateClientsMainSettingsAction(clientIdForSurveys, {
           name: clientName,
@@ -195,6 +202,28 @@ const ClientSettings = () => {
           enableHybridFuture: enableHybridFutureCheck,
         })
       )
+    } else if (isMenuStoreVal === "Departments") {
+      // When the case is saving department values apply these functions
+      console.log("TREE STRUCT VALUE", treeStruct)
+      window.alert("Department is saving")
+    } else if (isMenuStoreVal === "Locations") {
+      // When the case is saving department values apply these functions
+      window.alert("Location changes are saving")
+    } else if (isMenuStoreVal === "Surveys") {
+      // When the case is saving surveys values apply these functions
+      window.alert("Surveys changes are saving")
+    } else if (isMenuStoreVal === "Modules") {
+      // When the case is saving modules' values apply these functions
+      window.alert("Modules changes are saving")
+    } else if (isMenuStoreVal === "User management") {
+      // When the case is saving user management values apply these functions
+      window.alert("User management changes are saving")
+    } else if (isMenuStoreVal === "Verifications") {
+      // When the case is saving user management values apply these functions
+      window.alert("Verifications changes are saving")
+    } else if (isMenuStoreVal === "Identity provider") {
+      // When the case is saving user management values apply these functions
+      window.alert("Identity provider changes are saving")
     } else {
       toast.error("Please fill the required fields.")
     }
@@ -288,6 +317,8 @@ const ClientSettings = () => {
         locationRowData={locationRowData}
         setLocationRowData={setLocationRowData}
         title={isLocationEdit === true ? "Edit location" : "New location"}
+        isLocationEdit={isLocationEdit}
+        setLocationEdit={setLocationEdit}
       />
 
       <LocationGroupDrawer

@@ -444,6 +444,7 @@ const TopFilter = ({
                     key={item.options[i]}
                     setSurveyType={setSurveyType}
                     surveyRef={surveyRef}
+                    rightAreaCount={10}
                   />
                 ))}
               </div>

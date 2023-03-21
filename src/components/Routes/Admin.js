@@ -176,7 +176,6 @@ const routes = [
   {
     path: "/analytics-results",
     name: "analytics-results",
-    exact: true,
     pageTitle: "Analytics Results",
     component: Analytics_Results,
   },

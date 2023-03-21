@@ -11,6 +11,8 @@ const LocationSettings = ({
   setLocationGroupDrawer,
   locationRowData,
   setLocationRowData,
+  isLocationEdit,
+  setLocationEdit,
 }) => {
   const locationGroups = useSelector(
     (store) => store.getClientLocations.data.filteredLocationGroupCount
@@ -56,6 +58,8 @@ const LocationSettings = ({
                     setLocationDrawer={setLocationDrawer}
                     locationRowData={locationRowData}
                     setLocationRowData={setLocationRowData}
+                    isLocationEdit={isLocationEdit}
+                    setLocationEdit={setLocationEdit}
                   />
                 )}
 

@@ -52,6 +52,7 @@ import {
   getSelectedPages,
   getSelectedQuestions,
   postNewLocation,
+  updateLocation,
 } from "./adminReducers.js"
 import {
   campaignDetailsReducer,
@@ -160,4 +161,5 @@ export default combineReducers({
   getSelectedPages,
   getSelectedQuestions,
   postNewLocation,
+  updateLocation,
 })

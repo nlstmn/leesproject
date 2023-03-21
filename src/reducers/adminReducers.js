@@ -1016,7 +1016,7 @@ const exportClients = (
     default:
       return state
   }
-} 
+}
 
 const saveClientsMainSettings = (
   state = {
@@ -1190,7 +1190,32 @@ const getAllLanguages = (
 }
 
 const getSurveysMetrics = (
-  state = { loading: false, payload: null },
+  state = {
+    loading: false,
+    payload: {
+      totalSurveysCount: "0",
+      surveyCountsByStatuses: [
+        {
+          demo: "0",
+        },
+        {
+          "in build": "0",
+        },
+        {
+          live: "0",
+        },
+        {
+          closed: "0",
+        },
+        {
+          endingToday: "0",
+        },
+        {
+          endingTomorrow: "0",
+        },
+      ],
+    },
+  },
   action
 ) => {
   switch (action.type) {
@@ -1365,11 +1390,26 @@ const postNewLocation = (
   action
 ) => {
   switch (action.type) {
-    case "PostNewLocaiton_Request":
+    case "PostNewLocation_Request":
       return { ...state, loading: true }
     case "PostNewLocation_Success":
       return { ...state, loading: false, data: action.payload }
     case "PostNewLocation_Failed":
+      return { ...state, loading: false, error: action.payload }
+    default:
+      return state
+  }
+}
+const updateLocation = (
+  state = { loading: false, data: {}, error: null },
+  action
+) => {
+  switch (action.type) {
+    case "UpdateLocation_Request":
+      return { ...state, loading: true }
+    case "UpdateLocation_Success":
+      return { ...state, loading: false, data: action.payload }
+    case "UpdateLocation_Failed":
       return { ...state, loading: false, error: action.payload }
     default:
       return state
@@ -1418,4 +1458,5 @@ export {
   getSelectedQuestions,
   updateClientsMainSettings,
   postNewLocation,
+  updateLocation,
 }

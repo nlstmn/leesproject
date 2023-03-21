@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react"
 import { useSelector } from "react-redux"
+import { useLocation } from "react-router-dom"
 
 const CustomSelect = ({
   item,
@@ -9,19 +10,20 @@ const CustomSelect = ({
   isSelectChartType,
   setSelectChartType,
   setSurveyType,
+  rightAreaCount,
 }) => {
+  const location = useLocation()
   const [isOptionsOpen, setIsOptionsOpen] = useState(false)
   const [selectedOption, setSelectedOption] = useState(0)
+
   const itemData = useSelector((store) => store.getSurveysMetrics)
   const toggleOptions = () => {
     setIsOptionsOpen(!isOptionsOpen)
   }
-
   const setSelectedThenCloseDropdown = (index) => {
     setSelectedOption(index)
     setIsOptionsOpen(false)
-    setSurveyType(index)
-    // geçici sil
+    location.pathname.match(/\/surveys-management$/g) && setSurveyType(index)
     if (isSelectChartType !== undefined) {
       setSelectChartType(index)
     }
@@ -114,7 +116,9 @@ const CustomSelect = ({
             {item.options[selectedOption]}
           </button>
           <ul
-            className={`options ${isOptionsOpen ? "show" : ""}`}
+            className={`options light-dropdown-menu ${
+              isOptionsOpen ? "show" : ""
+            }`}
             role="listbox"
             aria-activedescendant={item.options[selectedOption]}
             tabIndex={-1}
@@ -132,28 +136,29 @@ const CustomSelect = ({
                 onClick={() => {
                   setSelectedThenCloseDropdown(index)
                 }}
+                className="dropdown_item"
               >
                 {option}
                 &nbsp;
-                {/*TODO: IF YOUR LOCATION IS SURVEYS MANAGEMENT SHOW METRICS - IN PROGRESS, DO NOT DELETE */}
-                {/* {location.pathname === "/surveys-management" &&
-                  index !== null &&
-                  (index === 0
-                    ? itemData.payload.surveyCountsByStatuses[2].live !==
-                        null &&
-                      itemData.payload.surveyCountsByStatuses[2].live !== null
-                    : index === 1
-                    ? itemData.payload.surveyCountsByStatuses[3].closed
-                    : index === 2
-                    ? itemData.payload.surveyCountsByStatuses[1]["in build"]
-                    : index === 3
-                    ? itemData.payload.surveyCountsByStatuses[4].endingToday
-                    : index === 4
-                    ? itemData.payload.surveyCountsByStatuses[4].endingTomorrow
-                    : index === 5
-                    ? itemData.payload.surveyCountsByStatuses[0].demo
-                    : "")} */}
-                <span key={item.options[index]}></span>
+                {location.pathname.match(/\/surveys-management$/g) &&
+                  index.payload !== null && (
+                    <span className="survey_count_badge">
+                      {index === 0
+                        ? itemData.payload.surveyCountsByStatuses[2].live
+                        : index === 1
+                        ? itemData.payload.surveyCountsByStatuses[3].closed
+                        : index === 2
+                        ? itemData.payload.surveyCountsByStatuses[1]["in build"]
+                        : index === 3
+                        ? itemData.payload.surveyCountsByStatuses[4].endingToday
+                        : index === 4
+                        ? itemData.payload.surveyCountsByStatuses[5]
+                            .endingTomorrow
+                        : index === 5
+                        ? itemData.payload.surveyCountsByStatuses[0].demo
+                        : index === 6 && 0}
+                    </span>
+                  )}
               </li>
             ))}
           </ul>

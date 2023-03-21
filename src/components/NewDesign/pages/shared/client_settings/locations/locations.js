@@ -10,6 +10,8 @@ const Locations = ({
   setLocationDrawer,
   locationRowData,
   setLocationRowData,
+  isLocationEdit,
+  setLocationEdit,
 }) => {
   // Redux Hooks
   const dispatch = useDispatch()
@@ -117,13 +119,18 @@ const Locations = ({
                 onClick={() => {
                   setLocationDrawer(true)
                   setLocationRowData(record)
+                  setLocationEdit(true)
                 }}
                 className="icon__btn"
               >
                 <span className="cxv-settings-l-icn clients_table_drop"></span>
               </button>
 
-              <Switch size="small" defaultChecked />
+              <Switch
+                size="small"
+                checked={record.enable}
+                onChange={() => {}}
+              />
             </div>
           </div>
         )

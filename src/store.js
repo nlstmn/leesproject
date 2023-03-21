@@ -8,12 +8,9 @@ const persistConfig = {
   // configuration object for redux-persist
   key: "leesman@@112233",
   storage, // define which storage to use
-  blacklist: ["getClientIndustry"],
+  blacklist: ["getClientIndustry", "getSurveyMetrics"],
   // Custom save
-  // Sadece bunu kayıtlı tutma
   // blacklist: ['isLogged'], // navigation will not be persisted
-
-  // Sadece bunu kayıtlı tut
   // whitelist: ['isForgot'] // only navigation will be persisted
 }
 

@@ -853,7 +853,7 @@ export const getSelectedQuestions =
   }
 
 export const postNewLocation = (clientId, ldata) => async (dispatch) => {
-  dispatch({ type: "PostNewLocaiton_Request" })
+  dispatch({ type: "PostNewLocation_Request" })
   try {
     const { data } = await axios.post(
       `v2admin/clients/${clientId}/locations/add-location`,
@@ -869,6 +869,27 @@ export const postNewLocation = (clientId, ldata) => async (dispatch) => {
     dispatch({ type: "PostNewLocation_Failed", payload: error })
     notification.warning({
       message: "Error occured while adding new location!",
+    })
+  }
+}
+
+export const updateLocation = (clientId, ldata) => async (dispatch) => {
+  dispatch({ type: "UpdateLocation_Request" })
+  try {
+    const { data } = await axios.put(
+      `v2admin/clients/${clientId}/locations/add-location`,
+      ldata,
+      { params: { tab: "locations" } }
+    )
+    dispatch({ type: "UpdateLocation_Success", payload: data })
+    notification.success({ message: "Location updated successfully!" })
+    setTimeout(() => {
+      window.location.reload()
+    }, 3000)
+  } catch (error) {
+    dispatch({ type: "UpdateLocation_Failed", payload: error })
+    notification.warning({
+      message: "Error occured while updating location!",
     })
   }
 }

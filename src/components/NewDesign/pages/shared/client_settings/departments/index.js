@@ -41,11 +41,15 @@ const DepartmentsSettings = ({
       dropdownDepartmentsData.departments.departmentTreeArray.map((item) => {
         const trees = {
           name: item.name,
+          parent_id: item.parent_id,
+          id: item.id,
+          enable: item.enable,
           children: item.children,
         }
         return trees
       })
     )
+    console.log("TREE STRUCT", treeStruct)
   }
 
   useEffect(() => {
@@ -100,6 +104,9 @@ const DepartmentsSettings = ({
                 onChange={(dropdownDepartmentsData) =>
                   setTreeStruct(dropdownDepartmentsData)
                 }
+                onVisibilityToggle={(expanded) => {
+                  changeNodeAtPath({})
+                }}
                 searchMethod={customSearchMethod}
                 searchQuery={searchString}
                 searchFocusOffset={searchFocusIndex}
@@ -157,6 +164,16 @@ const DepartmentsSettings = ({
                         size="small"
                         className="mr-2"
                         checked={node.enable}
+                        onChange={() => {
+                          setTreeStruct((state) =>
+                            changeNodeAtPath({
+                              treeData: treeStruct,
+                              path,
+                              getNodeKey,
+                              newNode: { ...node, enable: !node.enable },
+                            })
+                          )
+                        }}
                       >
                         Toggle Switch
                       </Switch>,

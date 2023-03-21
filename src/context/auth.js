@@ -21,7 +21,6 @@ const useAuth = () => {
   const fetchUser = async () => {
     Auth.currentAuthenticatedUser()
       .then((user) => {
-        console.log("FETCHED USER", user.signInUserSession)
         const role =
           user.signInUserSession && user.signInUserSession.idToken.payload.role
         const perm_list =

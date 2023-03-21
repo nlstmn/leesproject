@@ -22,11 +22,20 @@ import MobilityProfile from "./_mobility_profile_table"
 import SentimentBreakdown from "./_sentiment_breakdown_table"
 import ActivityProfile from "./_activity_profile_table"
 import WorkEnvironment from "./_work_environment"
+import { useParams } from "react-router-dom"
+import { useQuery } from "../../../../../util/query"
 
 const AllResults = () => {
+  const query = useQuery()
   useLayoutEffect(() => {
     document.body.classList.add("temp__class")
   }, [])
+  const params = useParams()
+  useEffect(() => {
+    console.log("This chart's params area: ", params)
+    console.log("QUERY IS", query.get("chart_type"))
+  }, [])
+
   // Table Drop Functions
   const [actionKey, setActionKey] = useState("")
   const isAction = (record) => record.key === actionKey
@@ -78,6 +87,15 @@ const AllResults = () => {
   ]
 
   const [isSelectChartType, setSelectChartType] = useState(0)
+
+  useEffect(() => {
+    setSelectChartType(() => {
+      return query.get("chart_type") !== null
+        ? parseInt(query.get("chart_type"))
+        : 0
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <>
