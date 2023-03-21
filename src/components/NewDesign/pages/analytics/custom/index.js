@@ -120,36 +120,36 @@ const CustomFilters = () => {
 
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-    }) => (
-      <>
-        <h3>Show items with a value that:</h3>
-        <Input
-          ref={searchInput}
-          placeholder={`Type...`}
-          value={selectedKeys[0]}
-          onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-        />
-        {select_items_3.map((item, i, arr) => (
-          <CustomSelect item={item} i={i} arr={arr} />
-        ))}
-        <Space>
-          <Button
-            type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-          >
-            Filter
-          </Button>
-          <Button onClick={() => clearFilters && handleReset(clearFilters)}>
-            Clear
-          </Button>
-          {/* <Button
+                       setSelectedKeys,
+                       selectedKeys,
+                       confirm,
+                       clearFilters,
+                     }) => (
+        <>
+          <h3>Show items with a value that:</h3>
+          <Input
+              ref={searchInput}
+              placeholder={`Type...`}
+              value={selectedKeys[0]}
+              onChange={(e) =>
+                  setSelectedKeys(e.target.value ? [e.target.value] : [])
+              }
+              onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          />
+          {select_items_3.map((item, i, arr) => (
+              <CustomSelect item={item} i={i} arr={arr} />
+          ))}
+          <Space>
+            <Button
+                type="primary"
+                onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            >
+              Filter
+            </Button>
+            <Button onClick={() => clearFilters && handleReset(clearFilters)}>
+              Clear
+            </Button>
+            {/* <Button
             type="link"
             size="small"
             onClick={() => {
@@ -162,38 +162,38 @@ const CustomFilters = () => {
           >
             Filter
           </Button> */}
-        </Space>
-      </>
+          </Space>
+        </>
     ),
     filterIcon: (filtered) => (
-      <i
-        className="cxv-expand-more-l-icn"
-        style={{
-          color: filtered ? "#4793F8" : "#1E1E1E",
-        }}
-      />
+        <i
+            className="cxv-expand-more-l-icn"
+            style={{
+              color: filtered ? "#4793F8" : "#1E1E1E",
+            }}
+        />
     ),
     onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+        record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100)
       }
     },
     render: (text) =>
-      searchedColumn === dataIndex ? (
-        <Highlighter
-          highlightStyle={{
-            backgroundColor: "#ffc069",
-            padding: 0,
-          }}
-          searchWords={[searchText]}
-          autoEscape
-          textToHighlight={text ? text.toString() : ""}
-        />
-      ) : (
-        text
-      ),
+        searchedColumn === dataIndex ? (
+            <Highlighter
+                highlightStyle={{
+                  backgroundColor: "#ffc069",
+                  padding: 0,
+                }}
+                searchWords={[searchText]}
+                autoEscape
+                textToHighlight={text ? text.toString() : ""}
+            />
+        ) : (
+            text
+        ),
   })
   //   Custom ANT Filter
 
@@ -241,47 +241,47 @@ const CustomFilters = () => {
     {
       title: "Action",
       key: "action",
-      width: "150px",
+      width: "180px",
       render: (_, record) => {
         const action = isAction(record)
         return (
-          <div className="action_btns">
-            <div className={`drop__btn ${action ? " show" : ""} `}>
-              <button
-                className="icon__btn"
-                onClick={
-                  action ? () => setActionKey("") : () => openDrop(record)
-                }
-              >
+            <div className="action_btns">
+              <div className={`drop__btn ${action ? " show" : ""} `}>
+                <button
+                    className="icon__btn"
+                    onClick={
+                      action ? () => setActionKey("") : () => openDrop(record)
+                    }
+                >
                 <span
-                  ref={ref_custom_table_drop}
-                  className="cxv-action-l-icn custom_table_drop"
+                    ref={ref_custom_table_drop}
+                    className="cxv-action-l-icn custom_table_drop"
                 ></span>
-              </button>
-              <div className="drop__menu">
-                <ul>
-                  <li>
-                    <button>Edit</button>
-                  </li>
-                  <li>
-                    <button>Create new surveys</button>
-                  </li>
-                  <li>
-                    <button>View in build surveys</button>
-                  </li>
-                  <li>
-                    <button>View results</button>
-                  </li>
-                  <li>
-                    <button>Bespoke setup</button>
-                  </li>
-                  <li>
-                    <button onClick={() => setDeleteModal(true)}>Delete</button>
-                  </li>
-                </ul>
+                </button>
+                <div className="drop__menu">
+                  <ul>
+                    <li>
+                      <button>Edit</button>
+                    </li>
+                    <li>
+                      <button>Create new surveys</button>
+                    </li>
+                    <li>
+                      <button>View in build surveys</button>
+                    </li>
+                    <li>
+                      <button>View results</button>
+                    </li>
+                    <li>
+                      <button>Bespoke setup</button>
+                    </li>
+                    <li>
+                      <button onClick={() => setDeleteModal(true)}>Delete</button>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
         )
       },
     },
@@ -339,140 +339,140 @@ const CustomFilters = () => {
   const [topSelect, setTopSelect] = React.useState("FilterGroups")
 
   return (
-    <>
-      <DeleteModal
-        visibleDatasetModal={deleteModal}
-        setDeleteModal={setDeleteModal}
-      />
-      <LeftFilter
-        visibleDrawer={visibleLeftDrawer}
-        setVisibleDrawer={setVisibleLeftDrawer}
-        setDatasetModal={setDatasetModal}
-      />
-      <RightFilter
-        visibleDrawer={visibleRightDrawer}
-        setVisibleDrawer={setVisibleRightDrawer}
-      />
+      <>
+        <DeleteModal
+            visibleDatasetModal={deleteModal}
+            setDeleteModal={setDeleteModal}
+        />
+        <LeftFilter
+            visibleDrawer={visibleLeftDrawer}
+            setVisibleDrawer={setVisibleLeftDrawer}
+            setDatasetModal={setDatasetModal}
+        />
+        <RightFilter
+            visibleDrawer={visibleRightDrawer}
+            setVisibleDrawer={setVisibleRightDrawer}
+        />
 
-      <DatasetModal
-        visibleDatasetModal={visibleDatasetModal}
-        setDatasetModal={setDatasetModal}
-      />
-      <DatasetModalLarge
-        visibleDatasetModal={visibleDatasetModalLarge}
-        setDatasetModal={setDatasetModalLarge}
-      />
+        <DatasetModal
+            visibleDatasetModal={visibleDatasetModal}
+            setDatasetModal={setDatasetModal}
+        />
+        <DatasetModalLarge
+            visibleDatasetModal={visibleDatasetModalLarge}
+            setDatasetModal={setDatasetModalLarge}
+        />
 
-      <LoaderPage />
+        <LoaderPage />
 
-      <div className="container-fluid">
-        <div className="row clearfix top-info">
-          <div className="col-lg-12">
-            {/* <div id="breadcrumb__dashboard">
+        <div className="container-fluid">
+          <div className="row clearfix top-info">
+            <div className="col-lg-12">
+              {/* <div id="breadcrumb__dashboard">
                     <ul>
                         <li className="breadcrumb-item_dashboard"><a href="#!">Breadcrump first</a></li>
                         <li className="breadcrumb-item_dashboard"><a href="#!">Breadcrump second</a></li>
                     </ul>
                 </div> */}
-            <h1>Custom filters</h1>
+              <h1>Custom filters</h1>
+            </div>
           </div>
-        </div>
 
-        <div className="row clearfix">
-          <div className="col-lg-12">
-            <div className="top__filter-dashboard b-t-b">
-              {/* Left */}
-              <div className="left__side">
-                <div className="left__item">
-                  <div className="labeled_custom_select default">
-                    <label className="dashboard_radio">
-                      <input
-                        type="radio"
-                        name="dd1"
-                        value="FilterGroups"
-                        checked={topSelect === "FilterGroups" ? "checked" : ""}
-                        onChange={() => setTopSelect("FilterGroups")}
-                      />
-                      <span className="label-_text">Filter groups</span>
-                      <span className="checkmark"></span>
-                    </label>
+          <div className="row clearfix">
+            <div className="col-lg-12">
+              <div className="top__filter-dashboard b-t-b">
+                {/* Left */}
+                <div className="left__side">
+                  <div className="left__item">
+                    <div className="labeled_custom_select default">
+                      <label className="dashboard_radio">
+                        <input
+                            type="radio"
+                            name="dd1"
+                            value="FilterGroups"
+                            checked={topSelect === "FilterGroups" ? "checked" : ""}
+                            onChange={() => setTopSelect("FilterGroups")}
+                        />
+                        <span className="label-_text">Filter groups</span>
+                        <span className="checkmark"></span>
+                      </label>
+                    </div>
                   </div>
-                </div>
-                <div
-                  className={`left__item ${
-                    topSelect === "FilterGroups" ? " " : " closed"
-                  }`}
-                >
-                  <DropMenuRadio
-                    data={data_filters_4}
-                    setTopSelectFlag={setTopSelectFlag}
-                    isTopSelectFlag={isTopSelectFlag}
-                  />
-                </div>
-                <div className="h_divider qq"></div>
-                <div className="left__item">
-                  <div className="labeled_custom_select default">
-                    <label className="dashboard_radio">
-                      <input
-                        type="radio"
-                        name="dd1"
-                        value="Datasets"
-                        checked={topSelect === "Datasets" ? "checked" : ""}
-                        onChange={() => setTopSelect("Datasets")}
-                      />
-                      <span className="label-_text">Datasets</span>
-                      <span className="checkmark"></span>
-                    </label>
-                  </div>
-                </div>
-                <div
-                  className={`left__item ${
-                    topSelect === "Datasets" ? " " : " closed"
-                  }`}
-                >
-                  <DropMenuRadio
-                    data={data_filters}
-                    setTopSelectFlag={setTopSelectFlag}
-                    isTopSelectFlag={isTopSelectFlag}
-                  />
-                </div>
-                <div className="h_divider qq"></div>
-                <div className="left__item">
-                  <button className="btn-dash drop has-icn">
-                    Delete
-                    <span className="cxv-delete-l-icn"></span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Right */}
-              <div className="right__side">
-                <div className="right__item">
-                  <button
-                    onClick={() => setDatasetModalLarge(true)}
-                    className="btn-dash drop has-icn"
+                  <div
+                      className={`left__item ${
+                          topSelect === "FilterGroups" ? " " : " closed"
+                      }`}
                   >
-                    Create new
-                    <span className="cxv-create-l-icn"></span>
-                  </button>
+                    <DropMenuRadio
+                        data={data_filters_4}
+                        setTopSelectFlag={setTopSelectFlag}
+                        isTopSelectFlag={isTopSelectFlag}
+                    />
+                  </div>
+                  <div className="h_divider qq"></div>
+                  <div className="left__item">
+                    <div className="labeled_custom_select default">
+                      <label className="dashboard_radio">
+                        <input
+                            type="radio"
+                            name="dd1"
+                            value="Datasets"
+                            checked={topSelect === "Datasets" ? "checked" : ""}
+                            onChange={() => setTopSelect("Datasets")}
+                        />
+                        <span className="label-_text">Datasets</span>
+                        <span className="checkmark"></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div
+                      className={`left__item ${
+                          topSelect === "Datasets" ? " " : " closed"
+                      }`}
+                  >
+                    <DropMenuRadio
+                        data={data_filters}
+                        setTopSelectFlag={setTopSelectFlag}
+                        isTopSelectFlag={isTopSelectFlag}
+                    />
+                  </div>
+                  <div className="h_divider qq"></div>
+                  <div className="left__item">
+                    <button className="btn-dash drop has-icn">
+                      Delete
+                      <span className="cxv-delete-l-icn"></span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Right */}
+                <div className="right__side">
+                  <div className="right__item">
+                    <button
+                        onClick={() => setDatasetModalLarge(true)}
+                        className="btn-dash drop has-icn"
+                    >
+                      Create new
+                      <span className="cxv-create-l-icn"></span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="col-lg-12">
-            <div className="n_table has__filter">
-              <Table
-                rowSelection={rowSelection}
-                columns={columns}
-                dataSource={data}
-                pagination={false}
-              />
+            <div className="col-lg-12">
+              <div className="n_table has__filter">
+                <Table
+                    rowSelection={rowSelection}
+                    columns={columns}
+                    dataSource={data}
+                    pagination={false}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </>
+      </>
   )
 }
 

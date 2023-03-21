@@ -5,6 +5,7 @@ import {AuthContext} from "../../../context/auth";
 const LeftFilter = ({visibleDrawer, setVisibleDrawer, setDatasetModal}) => {
     const [isSelect, setSelect] = useState("")
     const [isReviewFilters, setReviewFilters] = useState(false);
+    const [isManageFilters, setManageFilters] = useState(false);
     const {role} = useContext(AuthContext)
     const generalFilters = {
         "Building": [
@@ -97,6 +98,7 @@ const LeftFilter = ({visibleDrawer, setVisibleDrawer, setDatasetModal}) => {
                 item.isSelected = false;
             });
         });
+        setReviewFilters(false);
         setFilters(newFilters);
     }
 
@@ -148,7 +150,7 @@ const LeftFilter = ({visibleDrawer, setVisibleDrawer, setDatasetModal}) => {
                                             } `}
                                         >
                                             <button
-                                                onClick={() => setSelect(sectionName)}
+                                                onClick={() => {setSelect(sectionName); setReviewFilters(false)}}
                                             >
                                                 {sectionName}
                                             </button>
@@ -156,7 +158,7 @@ const LeftFilter = ({visibleDrawer, setVisibleDrawer, setDatasetModal}) => {
                                     ))
                                 }
                             </ul>
-                            <button onClick={() => setReviewFilters(true)} className="r__btn">
+                            <button onClick={() => {setReviewFilters(true); setManageFilters(false);}} className="r__btn">
                                 <span className="cxv-edit-l-icn"/> Review filters
                             </button>
                         </div>
@@ -171,7 +173,7 @@ const LeftFilter = ({visibleDrawer, setVisibleDrawer, setDatasetModal}) => {
                                     <h3>Review filters</h3>
                                 )}
                                 <button
-                                    onClick={() => setReviewFilters(false)}
+                                    onClick={() => {setManageFilters(true);}}
                                     className="r__btn_2"
                                 >
                                     Manage filters{" "}
@@ -212,40 +214,78 @@ const LeftFilter = ({visibleDrawer, setVisibleDrawer, setDatasetModal}) => {
                                     </ul>
                                 </div>
                             ) : (
-                                <div className="scroll_ul">
-                                    <ul className="ul_type_2">
-                                        {Object.entries(filters).map(([sectionName, sectionItems], sectionIndex) => (
-                                            <>
-                                                {
-                                                    sectionItems.filter(value => value.isSelected).length > 0 ? (
-                                                            <li>
-                                                                <h4>{sectionName}</h4>
+                                isManageFilters ? (
+                                    <div className="scroll_ul">
+                                        <ul className="ul_type_2">
+                                            {Object.entries(filters).map(([sectionName, sectionItems], sectionIndex) => (
+                                                <>
+                                                    {
+                                                        sectionItems.filter(value => value.isSelected).length > 0 ? (
+                                                                <li>
+                                                                    <h4>{sectionName}</h4>
+                                                                </li>
+                                                            )
+                                                            : ""
+                                                    }
+                                                    {sectionItems.map(({text, isSelected}, itemIndex) => (
+                                                        sectionItems.filter(value => value.isSelected).length > 0 ? (
+                                                                <li key={`${sectionName}-${itemIndex}`}>
+                                                                    <label className="dashboard_check default__it">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            name={text}
+                                                                            value={isSelected}
+                                                                            checked={isSelected}
+                                                                            onChange={(event) => handleCheckboxChange(event, sectionName, itemIndex)}
+                                                                        />
+                                                                        <span className="label-_text">{text}</span>
+                                                                        <span className="checkmark"/>
+                                                                    </label>
+                                                                </li>
+                                                            )
+                                                            : ""
+                                                    ))
+                                                    }
+                                                </>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                ) : (
+                                    <div className="scroll_ul">
+                                        <ul className="ul_type_2">
+                                            {Object.entries(filters).map(([sectionName, sectionItems], sectionIndex) => (
+                                                <>
+                                                    {
+                                                        sectionItems.filter(value => value.isSelected).length > 0 ? (
+                                                                <li>
+                                                                    <h4>{sectionName}</h4>
+                                                                </li>
+                                                            )
+                                                            : ""
+                                                    }
+                                                    {sectionItems.map(({text, isSelected}, itemIndex) => (
+                                                        isSelected ? (
+                                                            <li key={`${sectionName}-${itemIndex}`}>
+                                                                <label className="dashboard_check default__it">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        name={text}
+                                                                        value={isSelected}
+                                                                        checked={isSelected}
+                                                                        onChange={(event) => handleCheckboxChange(event, sectionName, itemIndex)}
+                                                                    />
+                                                                    <span className="label-_text">{text}</span>
+                                                                    <span className="checkmark"/>
+                                                                </label>
                                                             </li>
-                                                        )
-                                                        : ""
-                                                }
-                                                {sectionItems.map(({text, isSelected}, itemIndex) => (
-                                                    isSelected ? (
-                                                        <li key={`${sectionName}-${itemIndex}`}>
-                                                            <label className="dashboard_check default__it">
-                                                                <input
-                                                                    type="checkbox"
-                                                                    name={text}
-                                                                    value={isSelected}
-                                                                    checked={isSelected}
-                                                                    onChange={(event) => handleCheckboxChange(event, sectionName, itemIndex)}
-                                                                />
-                                                                <span className="label-_text">{text}</span>
-                                                                <span className="checkmark"/>
-                                                            </label>
-                                                        </li>
-                                                    ) : ""
-                                                ))
-                                                }
-                                            </>
-                                        ))}
-                                    </ul>
-                                </div>
+                                                        ) : ""
+                                                    ))
+                                                    }
+                                                </>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )
                             )}
                         </div>
                     </div>
