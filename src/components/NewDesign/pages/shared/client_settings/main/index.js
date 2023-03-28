@@ -26,7 +26,6 @@ const MainSettings = ({
   enableHybridFutureCheck,
   setEnableHybridFutureCheck,
 }) => {
-
   const search = window.location.search
   const params = new URLSearchParams(search)
   const clientId = params.get("client_id")
@@ -45,40 +44,40 @@ const MainSettings = ({
   const organisationData = [
     {
       value: 1,
-      label: "1 - 10 employees"
+      label: "1 - 10 employees",
     },
     {
       value: 2,
-      label: "11 - 24 employees"
+      label: "11 - 24 employees",
     },
     {
       value: 3,
-      label: "25 - 49 employees"
+      label: "25 - 49 employees",
     },
     {
       value: 4,
-      label: "50 - 99 employees"
+      label: "50 - 99 employees",
     },
     {
       value: 5,
-      label: "100 - 249 employees"
+      label: "100 - 249 employees",
     },
     {
       value: 6,
-      label: "250 - 499 employees"
+      label: "250 - 499 employees",
     },
     {
       value: 7,
-      label: "500 - 999 employees"
+      label: "500 - 999 employees",
     },
     {
       value: 8,
-      label: "1000 - 4999 employees"
+      label: "1000 - 4999 employees",
     },
     {
       value: 9,
-      label: "Over 5000 employees"
-    }
+      label: "Over 5000 employees",
+    },
   ]
 
   const getImage = async (clientIdNumber) => {
@@ -104,7 +103,7 @@ const MainSettings = ({
   useEffect(() => {
     setClientName(rowData.name)
     setClientRefNo(rowData.client_ref_no)
-    setClientIndustry(rowData.industry_id || parseInt(rowData.industry))
+    setClientIndustry(rowData.industry_id || parseInt(clientIndustry))
     setEnableHybridFutureCheck(
       rowData.enable_hybrid_future || rowData.enableHybridFuture
     )
@@ -249,17 +248,15 @@ const MainSettings = ({
                         setClientOrganisaton(organisatonValue)
                       }}
                     >
-                      {
-                        organisationData?.map((item) => (
-                          <option
-                            value={item.value}
-                            key={item.value}
-                            selected={item.value === clientOrganisaton}
-                          >
-                            {item.label}
-                          </option>
-                        ))
-                      }
+                      {organisationData?.map((item) => (
+                        <option
+                          value={item.value}
+                          key={item.value}
+                          selected={item.value === clientOrganisaton}
+                        >
+                          {item.label}
+                        </option>
+                      ))}
                     </select>
                     <div className="icn cxv-expand-more-l-icn"></div>
                   </div>

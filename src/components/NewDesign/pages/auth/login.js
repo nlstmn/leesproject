@@ -1,20 +1,33 @@
 /* eslint-disable jsx-a11y/alt-text */
-import React, { useContext, useLayoutEffect, useState } from "react"
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react"
 import { connect } from "react-redux"
 import { useHistory } from "react-router"
 import { Link } from "react-router-dom"
 import { notification } from "antd"
-
+import Auth from "@aws-amplify/auth"
 import { AuthContext } from "../../../../context/auth"
 import { setLoginBackground, setMenu } from "../../../../actions/settingsAction"
 import LoaderPage from "../../elements/loader_page"
 import { commonAuthItem } from "../../../common/commonComponents/formItems"
 
 const Login = ({ setLoginBackground, setMenu }) => {
+  const checkAuthStatus = async () => {
+    try {
+      await Auth.currentAuthenticatedUser()
+      history.push("/")
+    } catch (err) {
+      history.push("/login")
+    }
+  }
+
   sessionStorage.setItem("isIntroActive", "false")
 
   const history = useHistory()
   const { user, storeEmail, signIn, resendSignUp } = useContext(AuthContext)
+
+  useEffect(() => {
+    checkAuthStatus()
+  }, [])
 
   useLayoutEffect(() => {
     setLoginBackground(false)
@@ -56,11 +69,9 @@ const Login = ({ setLoginBackground, setMenu }) => {
     e.preventDefault()
     if (formData.email && formData.password) {
       storeEmail(formData.email)
-      signIn(formData.email, formData.password, formData.remember, {}) // user, password, additional info passed to lambda triggers
+      signIn(formData.email, formData.password, true, {}) // user, password, additional info passed to lambda triggers
         .then((user) => {
-          console.log("successful sign in")
-          console.log(user)
-          localStorage.setItem("remember", formData.remember)
+          localStorage.setItem("remember", true)
           closeLoginSpinner()
           setLoginBackground(false)
 

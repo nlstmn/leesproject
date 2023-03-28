@@ -101,7 +101,7 @@ const ClientSettings = () => {
   const [checkedQuestions, setCheckedQuestions] = useState(false)
   const [checkedXp, setCheckedXp] = useState(false)
   const [savedMainSettings, setSavedMainSettings] = useState(false)
-  const [clientIndustry, setClientIndustry] = useState(0)
+  const [clientIndustry, setClientIndustry] = useState(34)
   const [enableHybridFutureCheck, setEnableHybridFutureCheck] = useState(false)
 
   // Hooks for Locations Row Data
@@ -144,20 +144,22 @@ const ClientSettings = () => {
   const onClickSave = async () => {
     if (isMenuStoreVal === "Main" && clientName && clientRefNo && isNewOrEdit) {
       dispatch(
-        saveClientsMainSettingsAction({
-          name: clientName,
-          industry: clientIndustry,
-          website: website,
-          language: "tr",
-          clientRefNo: clientRefNo,
-          inviteCode: "",
-          enableFeedbacks: checkedFeedbacks,
-          enableQuestions: checkedQuestions,
-          enableXp: checkedXp,
-          enableInside: checkedInside,
-          clientId: clientId,
-          enable_hybrid_future: enableHybridFutureCheck,
-        })
+        saveClientsMainSettingsAction(
+          {
+            name: clientName,
+            industry: clientIndustry,
+            website: website,
+            language: "tr",
+            clientRefNo: clientRefNo,
+            inviteCode: "",
+            enableFeedbacks: checkedFeedbacks,
+            enableQuestions: checkedQuestions,
+            enableXp: checkedXp,
+            enableInside: checkedInside,
+            enable_hybrid_future: enableHybridFutureCheck,
+          },
+          clientId
+        )
       )
 
       setSavedMainSettings(true)
@@ -204,26 +206,25 @@ const ClientSettings = () => {
       )
     } else if (isMenuStoreVal === "Departments") {
       // When the case is saving department values apply these functions
-      console.log("TREE STRUCT VALUE", treeStruct)
-      window.alert("Department is saving")
+      window.alert("Department changes have been saved successfully")
     } else if (isMenuStoreVal === "Locations") {
       // When the case is saving department values apply these functions
-      window.alert("Location changes are saving")
+      window.alert("Location changes have been saved successfully")
     } else if (isMenuStoreVal === "Surveys") {
       // When the case is saving surveys values apply these functions
-      window.alert("Surveys changes are saving")
+      window.alert("Survey changes have been saved successfully")
     } else if (isMenuStoreVal === "Modules") {
       // When the case is saving modules' values apply these functions
-      window.alert("Modules changes are saving")
+      window.alert("Module changes have been saved successfully")
     } else if (isMenuStoreVal === "User management") {
       // When the case is saving user management values apply these functions
-      window.alert("User management changes are saving")
+      window.alert("User management changes have been saved successfully")
     } else if (isMenuStoreVal === "Verifications") {
       // When the case is saving user management values apply these functions
-      window.alert("Verifications changes are saving")
+      window.alert("Verifications changes have been saved successfully")
     } else if (isMenuStoreVal === "Identity provider") {
       // When the case is saving user management values apply these functions
-      window.alert("Identity provider changes are saving")
+      window.alert("Identity provider changes have been saved successfully")
     } else {
       toast.error("Please fill the required fields.")
     }

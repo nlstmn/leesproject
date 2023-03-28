@@ -4,7 +4,7 @@ import { notification } from "antd"
 import Auth from "@aws-amplify/auth"
 import API from "@aws-amplify/api"
 import axios from "axios"
-
+import { persistor } from "../store"
 import authReducer, { initialState } from "../reducers/auth"
 
 const AuthContext = React.createContext()
@@ -21,13 +21,15 @@ const useAuth = () => {
   const fetchUser = async () => {
     Auth.currentAuthenticatedUser()
       .then((user) => {
+        console.log("FETCHED USER", user.signInUserSession)
         const role =
           user.signInUserSession && user.signInUserSession.idToken.payload.role
         const perm_list =
           user.signInUserSession &&
           user.signInUserSession.idToken.payload.permissions
         axiosSetDefaults(
-          `Bearer ${user.signInUserSession.accessToken.jwtToken}`
+          `Bearer ${user.signInUserSession.accessToken.jwtToken}`,
+          `${user.signInUserSession.idToken.jwtToken}`
         )
 
         dispatch({
@@ -65,6 +67,10 @@ const useAuth = () => {
         sessionStorage.removeItem("selectedLocationName")
         sessionStorage.removeItem("client")
         sessionStorage.removeItem("filterData")
+        localStorage.clear()
+        sessionStorage.clear()
+        persistor.pause()
+        persistor.flush().then(() => persistor.purge())
         dispatch({ type: "RESET_USER_DATA" })
       })
       .catch((err) => {
@@ -73,9 +79,9 @@ const useAuth = () => {
   }
 
   const signIn = (email, password, remember, info) => {
-    /*Auth.configure({
+    Auth.configure({
       storage: remember ? localStorage : sessionStorage,
-    });*/
+    })
     return Auth.signIn(email, password, info) // user, password, additional info passed to lambda triggers
       .then((user) => {
         if (!user.challengeName) {
@@ -87,7 +93,8 @@ const useAuth = () => {
             user.signInUserSession.idToken.payload.permissions
 
           axiosSetDefaults(
-            `Bearer ${user.signInUserSession.accessToken.jwtToken}`
+            `Bearer ${user.signInUserSession.accessToken.jwtToken}`,
+            `${user.signInUserSession.idToken.jwtToken}`
           )
 
           console.log({
@@ -189,7 +196,6 @@ const amplifyConfig = {
     // Enforce user authentication prior to accessing AWS resources or not
     mandatorySignIn: true,
 
-    //storage: localStorage.getItem("remember") === "true" ? localStorage : sessionStorage,
     oauth: {
       domain: process.env.REACT_APP_AUTH_DOMAIN,
       scope: ["email", "profile", "openid", "aws.cognito.signin.user.admin"],
@@ -212,7 +218,7 @@ const amplifyConfig = {
         custom_header: () => {
           return Auth.currentSession()
             .then((user) => ({
-              Authorization: `Bearer ${user.getAccessToken().getJwtToken()}`,
+              Authorization: `Bearer ${user.getIdToken().getJwtToken()}`,
               // Authorization: `Bearer ${user.getIdToken().getJwtToken()}`,
             }))
             .catch((e) => {
@@ -225,14 +231,13 @@ const amplifyConfig = {
     ],
   },
 }
-const axiosSetDefaults = (token) => {
-  axios.defaults.headers.common["Authorization"] = token
+const axiosSetDefaults = (token, idToken) => {
+  axios.defaults.headers.common["Authorization"] = idToken
   axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*"
   axios.defaults.headers.post["Access-Control-Allow-Methods"] =
     "POST,GET,OPTIONS,DELETE,PUT"
   axios.defaults.headers.post["Content-Type"] = "application/json"
 }
-
 export default AuthProvider
 
 export { amplifyConfig, AuthContext }

@@ -49,7 +49,6 @@ const DepartmentsSettings = ({
         return trees
       })
     )
-    console.log("TREE STRUCT", treeStruct)
   }
 
   useEffect(() => {

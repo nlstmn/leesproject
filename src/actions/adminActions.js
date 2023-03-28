@@ -582,19 +582,23 @@ export const exportClientsAction = () => async (dispatch) => {
 }
 
 export const saveClientsMainSettingsAction =
-  ({
-    name = "",
-    industry = 0,
-    website = "",
-    language = "tr",
-    clientRefNo = "",
-    inviteCode = "",
-    enableFeedbacks = false,
-    enableQuestions = false,
-    enableXp = false,
-    enableInside = false,
-    clientId,
-  }) =>
+  (
+    {
+      name = "",
+      industry = "34",
+      website = "",
+      language = "tr",
+      clientRefNo = "",
+      inviteCode = "",
+      enableFeedbacks = false,
+      enableQuestions = false,
+      enableXp = false,
+      enableInside = false,
+      enableHybridFuture = false,
+      hybridOrganizationName = "",
+    },
+    clientId
+  ) =>
   async (dispatch) => {
     dispatch({ type: "SaveClientsMainSettings_Request" })
     try {
@@ -602,7 +606,7 @@ export const saveClientsMainSettingsAction =
         `v2admin/clients/${clientId}/clientmanagement`,
         {
           name: name,
-          industry: industry,
+          industry: parseInt(industry),
           website: website,
           language: language,
           clientRefNo: clientRefNo,
@@ -611,6 +615,8 @@ export const saveClientsMainSettingsAction =
           enable_questions: enableQuestions,
           enable_xp: enableXp,
           enable_inside: enableInside,
+          enable_hybrid_future: enableHybridFuture,
+          hybrid_organization_name: hybridOrganizationName,
         }
       )
       dispatch({
@@ -630,7 +636,7 @@ export const updateClientsMainSettingsAction =
     clientId,
     {
       name = "",
-      industry = 0,
+      industry = 34,
       website = "",
       clientRefNo = "",
       enableFeedbacks = false,
@@ -852,12 +858,12 @@ export const getSelectedQuestions =
     }
   }
 
-export const postNewLocation = (clientId, ldata) => async (dispatch) => {
+export const postNewLocation = (clientId, locationData) => async (dispatch) => {
   dispatch({ type: "PostNewLocation_Request" })
   try {
     const { data } = await axios.post(
       `v2admin/clients/${clientId}/locations/add-location`,
-      ldata,
+      locationData,
       { params: { tab: "locations" } }
     )
     dispatch({ type: "PostNewLocation_Success", payload: data })
@@ -873,12 +879,12 @@ export const postNewLocation = (clientId, ldata) => async (dispatch) => {
   }
 }
 
-export const updateLocation = (clientId, ldata) => async (dispatch) => {
+export const updateLocation = (clientId, locationData) => async (dispatch) => {
   dispatch({ type: "UpdateLocation_Request" })
   try {
     const { data } = await axios.put(
       `v2admin/clients/${clientId}/locations/add-location`,
-      ldata,
+      locationData,
       { params: { tab: "locations" } }
     )
     dispatch({ type: "UpdateLocation_Success", payload: data })

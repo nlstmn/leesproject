@@ -78,7 +78,7 @@ const LeftFilter = ({visibleDrawer, setVisibleDrawer, setDatasetModal}) => {
     const [filters, setFilters] = useState(generalFilters);
 
     useEffect(() => {
-        if ("Admin" === role || "Leesman Admin" === role) {
+        if (role.includes("Admin") || role.includes("Leesman Admin")) {
             setFilters({...filters, ...adminFilters});
         } else if ("Client" === role) {
             setFilters({...filters, ...clientFilters});

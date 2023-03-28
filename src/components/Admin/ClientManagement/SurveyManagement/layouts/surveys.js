@@ -367,7 +367,7 @@ const Surveys = ({ isCreateSurvey, setCreateSurvey, setSurveyId }) => {
           <div className="row clearfix">
             <div className="col-xl-12 col-lg-12 col-md-12">
               <h1>Survey management</h1>
-              {role !== "Admin" && clientId !== "0" && <Tabs />}
+              {(role !== "Admin" && clientId !== "0") && <Tabs />}
               <div className="row mb-4 page-__header">
                 <div className="col-xl-6 col-lg-6 col-md-6">
                   <h2 className="card-title">
