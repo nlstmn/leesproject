@@ -212,23 +212,25 @@ const MainSettings = ({
                   <span>Client industry</span>
                   <div className="n__form_select">
                     <select
-                      name="industry"
-                      id="industry"
-                      onChange={(e) => {
-                        const industryValue = e.target.value
-                        setClientIndustry(industryValue)
-                      }}
+                        name="industry"
+                        id="industry"
+                        onChange={(e) => {
+                          const industryValue = e.target.value
+                          setClientIndustry(industryValue)
+                        }}
                     >
+                      <option value="" disabled hidden selected>
+                        Please Select Industry
+                      </option>
                       {industryData.data.length > 0 &&
-                        industryData.data.map((item) => (
-                          <option
-                            value={item.id}
-                            key={item.id}
-                            selected={item.id === clientIndustry}
-                          >
-                            {item.name}
-                          </option>
-                        ))}
+                          industryData.data.map((item) => (
+                              <option
+                                  value={item.id}
+                                  key={item.id}
+                              >
+                                {item.name}
+                              </option>
+                          ))}
                     </select>
                     <div className="icn cxv-expand-more-l-icn"></div>
                   </div>
@@ -248,11 +250,14 @@ const MainSettings = ({
                         setClientOrganisaton(organisatonValue)
                       }}
                     >
+                      <option value="" disabled hidden selected>
+                        Please select
+                      </option>
                       {organisationData?.map((item) => (
                         <option
                           value={item.value}
                           key={item.value}
-                          selected={item.value === clientOrganisaton}
+
                         >
                           {item.label}
                         </option>

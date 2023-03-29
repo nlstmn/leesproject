@@ -245,7 +245,7 @@ const CustomFilters = () => {
       render: (_, record) => {
         const action = isAction(record)
         return (
-            <div className="action_btns">
+            <div className="action_btns"  style={{marginRight: "10px"}}>
               <div className={`drop__btn ${action ? " show" : ""} `}>
                 <button
                     className="icon__btn"
@@ -259,7 +259,7 @@ const CustomFilters = () => {
                 ></span>
                 </button>
                 <div className="drop__menu">
-                  <ul>
+                  <ul style={{border:"1px solid", paddingLeft:"4px", borderRadius:"9px"}}>
                     <li>
                       <button>Edit</button>
                     </li>

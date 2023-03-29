@@ -325,11 +325,11 @@ const SurveysManagement = () => {
     {
       title: "Action",
       key: "action",
-      width: "100px",
+      width: "150px",
       render: (_, record) => {
         const action = isAction(record)
         return (
-          <div className="action_btns">
+          <div className="action_btns" style={{marginRight: "10px"}}>
             <div className={`drop__btn ${action ? " show" : ""} `}>
               <button
                 className="icon__btn"
@@ -347,7 +347,7 @@ const SurveysManagement = () => {
                 ></span>
               </button>
               <div className="drop__menu">
-                <ul>
+                <ul style={{border:"1px solid", paddingLeft:"4px", borderRadius:"9px"}}>
                   {surveyType === 0 && (
                     <li>
                       <button>Survey link</button>
