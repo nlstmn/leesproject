@@ -18,15 +18,16 @@ import DrawerLanguage from "../../../shared/client_settings/languages/drawer_lan
 import NotificationsSurveySettings from "./notifications/index"
 import CustomisationsSurveySettings from "./customisations/index"
 import AdditionalSettings from "./additional/index"
-import DrawerLocationGroup from "../../../shared/client_settings/locations/drawer_locationGroup"
 import DrawerModules from "./additional/drawer_modules"
 import DrawerDemographicsQuestions from "./demographics/drawer_demographics_questions"
 import DrawerTailorLocationQuestions from "./locations/drawer_tailor_questions"
 import DrawerImportExport from "../../../shared/import_export/index"
 import { useSelector } from "react-redux"
+import DrawerLocationGroup from "./locations/drawer_locationGroup"
 
 const CreateSurvey = () => {
   const clientName = useSelector((store) => store.saveClientName.data)
+  const surveyId = useSelector((store) => store.saveSurveyId?.data)
 
   useLayoutEffect(() => {
     document.body.classList.add("temp__class")
@@ -34,7 +35,7 @@ const CreateSurvey = () => {
 
   const [deleteModal, setDeleteModal] = useState(false)
 
-  const [isMenu, setMenu] = useState("Summary")
+  const [isMenu, setMenu] = useState("General setup")
   const [isMenuSub, setMenuSub] = useState(null)
   const [checkedLoginType, setCheckedLoginType] = useState("Email")
   const [isLocationSurveyDrawer, setLocationSurveyDrawer] = useState(false)
@@ -47,7 +48,10 @@ const CreateSurvey = () => {
     useState(false)
   const [isTailorLocationDrawer, setTailorLocationDrawer] = useState(false)
   const [isImportExportDrawer, setImportExportDrawer] = useState(false)
-
+  const [isCreate, setIsCreate] = useState(surveyId ? false : true)
+  useEffect(() => {
+    setIsCreate(surveyId ? false : true)
+  }, [surveyId])
   const languagesSubMenu = (
     <div className="col-lg-12 mt-1">
       <div className="n_menu_horizontal sub bottom">
@@ -123,7 +127,7 @@ const CreateSurvey = () => {
       <DrawerDemographicsQuestions
         isDemographicsQuestionsDrawer={isDemographicsQuestionsDrawer}
         setDemographicsQuestionsDrawer={setDemographicsQuestionsDrawer}
-        title={"Add new question"}
+        title={"Add/Edit question"}
       />
 
       <DrawerTailorLocationQuestions
@@ -159,16 +163,18 @@ const CreateSurvey = () => {
               <div className="left__side">
                 <div className="left__item">
                   <div className="n_menu_horizontal top">
-                    <a
-                      onClick={() => {
-                        setMenu("Summary")
-                        setMenuSub("")
-                      }}
-                      href="#!"
-                      className={`${isMenu === "Summary" ? " active" : ""} `}
-                    >
-                      Summary
-                    </a>
+                    {!isCreate && (
+                      <a
+                        onClick={() => {
+                          setMenu("Summary")
+                          setMenuSub("")
+                        }}
+                        href="#!"
+                        className={`${isMenu === "Summary" ? " active" : ""} `}
+                      >
+                        Summary
+                      </a>
+                    )}
                     <a
                       onClick={() => {
                         setMenu("General setup")
@@ -181,92 +187,94 @@ const CreateSurvey = () => {
                     >
                       General setup
                     </a>
-                    <a
-                      onClick={() => {
-                        setMenu("Demographics")
-                        setMenuSub("")
-                      }}
-                      href="#!"
-                      className={`${
-                        isMenu === "Demographics" ? " active" : ""
-                      } `}
-                    >
-                      Demographics and Additional questions
-                    </a>
-                    <a
-                      onClick={() => {
-                        setMenu("Locations")
-                        setMenuSub("")
-                      }}
-                      href="#!"
-                      className={`${isMenu === "Locations" ? " active" : ""} `}
-                    >
-                      Locations
-                    </a>
-                    <a
-                      onClick={() => {
-                        setMenu("Departments")
-                        setMenuSub("")
-                      }}
-                      href="#!"
-                      className={`${
-                        isMenu === "Departments" ? " active" : ""
-                      } `}
-                    >
-                      Departments
-                    </a>
-                    <a
-                      onClick={() => {
-                        setMenu("Additional")
-                        setMenuSub("")
-                      }}
-                      href="#!"
-                      className={`${isMenu === "Additional" ? " active" : ""} `}
-                    >
-                      Additional modules
-                    </a>
-                    <a
-                      onClick={() => {
-                        setMenu("Customisations")
-                        setMenuSub("")
-                      }}
-                      href="#!"
-                      className={`${
-                        isMenu === "Customisations" ? " active" : ""
-                      } `}
-                    >
-                      Customisations
-                    </a>
-                    <a
-                      onClick={() => {
-                        setMenu("Notifications")
-                        setMenuSub("")
-                      }}
-                      href="#!"
-                      className={`${
-                        isMenu === "Notifications" ? " active" : ""
-                      } `}
-                    >
-                      Notifications
-                    </a>
-                    <a
-                      onClick={() => {
-                        setMenu("Languages")
-                        setMenuSub("Locations")
-                      }}
-                      href="#!"
-                      className={`${isMenu === "Languages" ? " active" : ""} `}
-                    >
-                      Translations
-                    </a>
-
-                    {/* <a onClick={()=>setMenu("Admin setup")} href="#!" className={`${isMenu === "Admin setup" ? " active" : ""} `}>Admin setup</a>
-                      <a onClick={()=>setMenu("Admin tailoring")} href="#!" className={`${isMenu === "Admin tailoring" ? " active" : ""} `}>Admin tailoring</a>
-                      <a onClick={()=>setMenu("IT compatibility")} href="#!" className={`${isMenu === "IT compatibility" ? " active" : ""} `}>IT compatibility</a>
-                      <a onClick={()=>setMenu("Languages")} href="#!" className={`${isMenu === "Languages" ? " active" : ""} `}>Languages</a>
-                      <a onClick={()=>setMenu("Locations")} href="#!" className={`${isMenu === "Locations" ? " active" : ""} `}>Locations</a>
-                      <a onClick={()=>setMenu("Floors")} href="#!" className={`${isMenu === "Floors" ? " active" : ""} `}>Floors</a>
-                      <a onClick={()=>setMenu("Departments")} href="#!" className={`${isMenu === "Departments" ? " active" : ""} `}>Departments</a> */}
+                    {!isCreate && (
+                      <>
+                        <a
+                          onClick={() => {
+                            setMenu("Demographics")
+                            setMenuSub("")
+                          }}
+                          href="#!"
+                          className={`${
+                            isMenu === "Demographics" ? " active" : ""
+                          } `}
+                        >
+                          Demographics and Additional questions
+                        </a>
+                        <a
+                          onClick={() => {
+                            setMenu("Locations")
+                            setMenuSub("")
+                          }}
+                          href="#!"
+                          className={`${
+                            isMenu === "Locations" ? " active" : ""
+                          } `}
+                        >
+                          Locations
+                        </a>
+                        <a
+                          onClick={() => {
+                            setMenu("Departments")
+                            setMenuSub("")
+                          }}
+                          href="#!"
+                          className={`${
+                            isMenu === "Departments" ? " active" : ""
+                          } `}
+                        >
+                          Departments
+                        </a>
+                        <a
+                          onClick={() => {
+                            setMenu("Additional")
+                            setMenuSub("")
+                          }}
+                          href="#!"
+                          className={`${
+                            isMenu === "Additional" ? " active" : ""
+                          } `}
+                        >
+                          Additional modules
+                        </a>
+                        <a
+                          onClick={() => {
+                            setMenu("Customisations")
+                            setMenuSub("")
+                          }}
+                          href="#!"
+                          className={`${
+                            isMenu === "Customisations" ? " active" : ""
+                          } `}
+                        >
+                          Customisations
+                        </a>
+                        <a
+                          onClick={() => {
+                            setMenu("Notifications")
+                            setMenuSub("")
+                          }}
+                          href="#!"
+                          className={`${
+                            isMenu === "Notifications" ? " active" : ""
+                          } `}
+                        >
+                          Notifications
+                        </a>
+                        <a
+                          onClick={() => {
+                            setMenu("Languages")
+                            setMenuSub("Locations")
+                          }}
+                          href="#!"
+                          className={`${
+                            isMenu === "Languages" ? " active" : ""
+                          } `}
+                        >
+                          Translations
+                        </a>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -277,24 +285,6 @@ const CreateSurvey = () => {
               </div>
             </div>
           </div>
-
-          {/* SUB MENU */}
-
-          {/* {isMenu === "Summary" && (
-            <div className="col-lg-12 mt-1">
-              <div className="n_menu_horizontal top bottom">
-                <a onClick={()=>setMenuSub("Quaternary 1")} href="#!" className={`${isMenuSub === "Quaternary 1" ? " active" : ""} `}>Quaternary 1</a>
-                <a onClick={()=>setMenuSub("Quaternary 2")} href="#!" className={`${isMenuSub === "Quaternary 2" ? " active" : ""} `}>Quaternary 2</a>
-                <a onClick={()=>setMenuSub("Quaternary 3")} href="#!" className={`${isMenuSub === "Quaternary 3" ? " active" : ""} `}>Quaternary 3</a>
-                <a onClick={()=>setMenuSub("Quaternary 4")} href="#!" className={`${isMenuSub === "Quaternary 4" ? " active" : ""} `}>Quaternary 4</a>
-                <a onClick={()=>setMenuSub("Quaternary 5")} href="#!" className={`${isMenuSub === "Quaternary 5" ? " active" : ""} `}>Quaternary 5</a>
-                <a onClick={()=>setMenuSub("Quaternary 6")} href="#!" className={`${isMenuSub === "Quaternary 6" ? " active" : ""} `}>Quaternary 6</a>
-                <a onClick={()=>setMenuSub("Quaternary 7")} href="#!" className={`${isMenuSub === "Quaternary 7" ? " active" : ""} `}>Quaternary 7</a>
-              </div>
-            </div>
-          )} */}
-
-          {/* SUB MENU */}
 
           <div
             className={`${

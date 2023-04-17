@@ -5,7 +5,7 @@ export const initialState = {
   enable_inside: false,
 }
 
-export default function auth(state = initialState, action) {
+export default function currentSessionUser(state = initialState, action) {
   switch (action.type) {
     case "FETCH_CLIENT_INIT":
       return {

@@ -159,6 +159,25 @@ export const TreeColumn = ({
     </div>
   )
 }
+export const LightModeTreeColumn = ({
+  setSelected,
+  checkedKeys,
+  treeData,
+  count,
+}) => {
+  return (
+    <div className={`filters-_column-${count} mr-3`}>
+      <Tree
+        checkable
+        onCheck={(keys, info) => {
+          setSelected(onlyIntArray(keys))
+        }}
+        checkedKeys={checkedKeys}
+        treeData={treeData}
+      />
+    </div>
+  )
+}
 export const CustomTreeColumn = ({
   type,
   selectAll,

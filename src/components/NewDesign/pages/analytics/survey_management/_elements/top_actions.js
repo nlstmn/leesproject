@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react"
-
+import { useDispatch, useSelector } from "react-redux"
+import { useHistory } from "react-router-dom"
+import { notification } from "../../../../../../../node_modules/antd/lib/index"
+import {
+  CreateSurveyAction,
+  putSurveySetupAction,
+  surveySetupDrawerData,
+  surveySetupFormData,
+} from "../../../../../../actions/adminActions"
+import { saveSurveyId } from "../../../../../../actions/surveysManagement"
 const TopSurveyActions = ({
   isMenu,
   isMenuSub,
@@ -19,6 +28,21 @@ const TopSurveyActions = ({
   isImportExportDrawer,
   setImportExportDrawer,
 }) => {
+  const dispatch = useDispatch()
+  const history = useHistory()
+  const surveyId = useSelector((store) => store.saveSurveyId.data)
+  const clientId = useSelector((store) => store.saveClientIdForSurveys.data)
+  const surveyGeneralData = useSelector(
+    (store) => store.setSurveySetupGeneralData.data
+  )
+
+  const activeTabData = useSelector(
+    (store) => store.setSurveySetupFormData.data
+  )
+
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+
   return (
     <>
       <div className="top__filter-dashboard b-t-b">
@@ -27,10 +51,41 @@ const TopSurveyActions = ({
           {isMenu !== "Summary" ? (
             <>
               <div className="left__item">
-                <button className="n__btn dark icon">Save</button>
+                <button
+                  className="n__btn dark icon"
+                  onClick={() => {
+                    dispatch(
+                      surveyId
+                        ? putSurveySetupAction({
+                            clientId,
+                            surveyId,
+                            type: activeTabData.requestType,
+                            data: activeTabData.data,
+                            successMessage: activeTabData.successMessage,
+                          })
+                        : CreateSurveyAction({
+                            clientId,
+                            data: activeTabData.data,
+                            successMessage: "Survey created successfully",
+                          })
+                    )
+                  }}
+                >
+                  Save
+                </button>
               </div>
               <div className="left__item">
-                <button className="n__btn outline icon">Cancel</button>
+                <button
+                  className="n__btn outline icon"
+                  onClick={() => {
+                    dispatch(surveySetupDrawerData({ data: [] }))
+                    dispatch(surveySetupFormData({ data: [] }))
+                    dispatch(saveSurveyId({ data: null }))
+                    history.push("/surveys-management")
+                  }}
+                >
+                  Cancel
+                </button>
               </div>
               <div className="h_divider qq"></div>
             </>
@@ -41,13 +96,39 @@ const TopSurveyActions = ({
               </div>
               <div className="h_divider qq"></div>
               <div className="left__item">
-                <button className="btn-dash drop has-icn">
+                <button
+                  className="btn-dash drop has-icn"
+                  onClick={() => {
+                    dispatch(
+                      putSurveySetupAction({
+                        clientId,
+                        surveyId,
+                        type: "update_cache",
+                        data: [],
+                        successMessage: "Cache updated successfully",
+                      })
+                    )
+                  }}
+                >
                   Update cache
                   <span className="iconx-sync"></span>
                 </button>
               </div>
               <div className="left__item">
-                <button className="btn-dash drop has-icn">
+                <button
+                  className="btn-dash drop has-icn"
+                  onClick={() => {
+                    dispatch(
+                      putSurveySetupAction({
+                        clientId,
+                        surveyId,
+                        type: "delete_cache",
+                        data: [],
+                        successMessage: "Cache deleted successfully",
+                      })
+                    )
+                  }}
+                >
                   Delete cache
                   <span className="cxv-delete-l-icn"></span>
                 </button>
@@ -57,9 +138,16 @@ const TopSurveyActions = ({
                 <div className="n__form_control top_action_check">
                   <label className="n__form_label dashboard_check">
                     <input
+                      value={activeTabData?.deleteOldData}
+                      onChange={(e) => {
+                        dispatch(
+                          surveySetupFormData({
+                            deleteOldData: !e.target.checked,
+                          })
+                        )
+                      }}
                       type="checkbox"
                       name="oldUserData"
-                      value="oldUserData"
                     />
                     <span className="label-_text">Delete old user data</span>
                     <span className="checkmark"></span>
@@ -72,7 +160,22 @@ const TopSurveyActions = ({
           {isMenu === "General setup" && (
             <>
               <div className="left__item">
-                <button className="btn-dash drop has-icn">
+                <button
+                  className="btn-dash drop has-icn"
+                  onClick={() => {
+                    navigator.clipboard.writeText(
+                      window.location.origin +
+                        "/survey?" +
+                        `name=${surveyGeneralData?.url}&` +
+                        `id=${surveyId}&` +
+                        `code=${surveyGeneralData?.code}&` +
+                        `referance=${surveyGeneralData?.survey_login_type_id}`
+                    )
+                    notification.success({
+                      message: "Invite link copied to clipboard!",
+                    })
+                  }}
+                >
                   Get survey URL
                   <span className="iconx-globe icn xl"></span>
                 </button>
@@ -84,10 +187,13 @@ const TopSurveyActions = ({
             <>
               <div className="left__item">
                 <button
-                  onClick={() => setDemographicsQuestionsDrawer(true)}
+                  onClick={() => {
+                    setDemographicsQuestionsDrawer(true)
+                    dispatch(surveySetupDrawerData([]))
+                  }}
                   className="btn-dash drop has-icn"
                 >
-                  Add new question
+                  Add question
                   <span className="cxv-create-l-icn"></span>
                 </button>
               </div>
@@ -123,6 +229,19 @@ const TopSurveyActions = ({
                       type="checkbox"
                       name="asLocationGroup"
                       value="asLocationGroup"
+                      checked={activeTabData?.other_location_group}
+                      onChange={() => {
+                        dispatch(
+                          putSurveySetupAction({
+                            clientId,
+                            surveyId,
+                            type: "toggle_other_location_group_enabled",
+                            data: [],
+                            successMessage:
+                              "Location group other option toggled successfully",
+                          })
+                        )
+                      }}
                     />
                     <span className="label-_text">
                       Use 'Other' as location group
@@ -131,20 +250,7 @@ const TopSurveyActions = ({
                   </label>
                 </div>
               </div>
-              <div className="h_divider qq"></div>
-              <div className="left__item">
-                <div className="n__form_control top_action_check">
-                  <label className="n__form_label dashboard_check">
-                    <input
-                      type="checkbox"
-                      name="asLocation"
-                      value="asLocation"
-                    />
-                    <span className="label-_text">Use 'Other' as location</span>
-                    <span className="checkmark"></span>
-                  </label>
-                </div>
-              </div>
+
               <div className="h_divider qq"></div>
 
               <div className="left__item">
@@ -178,6 +284,19 @@ const TopSurveyActions = ({
                       type="checkbox"
                       name="asDepartment"
                       value="asDepartment"
+                      checked={activeTabData?.other_department}
+                      onChange={() => {
+                        dispatch(
+                          putSurveySetupAction({
+                            clientId,
+                            surveyId,
+                            type: "toggle_other_department_enabled",
+                            data: [],
+                            successMessage:
+                              "Department other option toggled successfully",
+                          })
+                        )
+                      }}
                     />
                     <span className="label-_text">
                       Use 'Other' as department
@@ -225,16 +344,55 @@ const TopSurveyActions = ({
                   <label className="n__form_label">
                     <div className="group">
                       <input
+                        type="Name"
+                        onChange={(e) => setName(e.target.value)}
+                        value={name}
+                        name="name"
+                        className="n_input"
+                        placeholder="Name..."
+                      />
+                      <input
                         type="email"
+                        onChange={(e) => setEmail(e.target.value)}
+                        value={email}
                         name="name"
                         className="n_input"
                         placeholder="Email..."
                       />
-                      <button className="iconic__btn" title="Add">
+                      <button
+                        className="iconic__btn"
+                        title="Add"
+                        onClick={() => {
+                          name?.length && email.length
+                            ? dispatch(
+                                putSurveySetupAction({
+                                  clientId,
+                                  surveyId,
+                                  type: "emails",
+                                  data: [
+                                    ...activeTabData.map((i) => {
+                                      return {
+                                        name: i.name,
+                                        emailName: i.email,
+                                      }
+                                    }),
+                                    { name: name, emailName: email },
+                                  ],
+                                  successMessage:
+                                    "Name and email saved successfully",
+                                })
+                              )
+                            : notification.warning({
+                                message: "Please enter name and email",
+                              })
+                          setName("")
+                          setEmail("")
+                        }}
+                      >
                         <span className="iconx-plus1"></span>
                       </button>
                     </div>
-                  </label>
+                  </label>{" "}
                 </div>
               </div>
             </>

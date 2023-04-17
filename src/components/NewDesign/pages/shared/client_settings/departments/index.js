@@ -38,16 +38,14 @@ const DepartmentsSettings = ({
   const getDropdownDepartments = async () => {
     await dispatch(dropdownDepartmentsAction(clientId))
     setTreeStruct(
-      dropdownDepartmentsData.departments.departmentTreeArray.map((item) => {
-        const trees = {
-          name: item.name,
-          parent_id: item.parent_id,
-          id: item.id,
-          enable: item.enable,
-          children: item.children,
-        }
-        return trees
-      })
+      dropdownDepartmentsData.departments.departmentTreeArray !== undefined &&
+        dropdownDepartmentsData.departments.departmentTreeArray.map((item) => {
+          const trees = {
+            name: item.name,
+            children: item.children,
+          }
+          return trees
+        })
     )
   }
 

@@ -98,7 +98,7 @@ const Header = ({
     if (loggedIn) {
       if (!user.isLoading && !user.lastFetched && !user.isError) {
         userActions.fetchInit()
-        Promise.all([API.get("CoreAPI", "/account")])
+        Promise.all([API.get("CoreAPI", "account")])
           .then((value) => {
             const user_ = value[0]
             userActions.fetchSuccess(user_)

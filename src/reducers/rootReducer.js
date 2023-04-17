@@ -4,6 +4,7 @@ import demographics from "./demographics"
 import user from "./user"
 import client from "./client"
 import auth from "./auth"
+import currentSessionUser from "./client"
 import filter from "./filter"
 import {
   userManagementDepartments,
@@ -51,8 +52,16 @@ import {
   getSelectedModules,
   getSelectedPages,
   getSelectedQuestions,
+  setSurveySetupFormData,
+  setSurveySetupDrawerData,
+  setSurveySetupGeneralData,
   postNewLocation,
   updateLocation,
+  setSelectedSurveyStatusData,
+  getRegions,
+  getCountries,
+  getCities,
+  getV2Client,
 } from "./adminReducers.js"
 import {
   campaignDetailsReducer,
@@ -84,6 +93,7 @@ import { saveSurveyId, saveClientName } from "./surveysManagement"
 
 import { leesmanClient, leesmanLogs, leesmanMigration } from "./leesmanReducer"
 export default combineReducers({
+  currentSessionUser,
   settings,
   demographics,
   user,
@@ -160,6 +170,14 @@ export default combineReducers({
   getSelectedModules,
   getSelectedPages,
   getSelectedQuestions,
+  setSurveySetupFormData,
+  setSurveySetupDrawerData,
+  setSurveySetupGeneralData,
   postNewLocation,
   updateLocation,
+  setSelectedSurveyStatusData,
+  getRegions,
+  getCountries,
+  getCities,
+  getV2Client,
 })

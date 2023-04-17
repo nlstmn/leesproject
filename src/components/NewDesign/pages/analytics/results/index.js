@@ -58,7 +58,6 @@ const AllResults = () => {
     setVisibleKey(record.key)
   }
   // Table Visibility Functions
-
   // Reset Drop Select
   const [isTopSelectFlag, setTopSelectFlag] = useState("")
   // Reset Drop Select

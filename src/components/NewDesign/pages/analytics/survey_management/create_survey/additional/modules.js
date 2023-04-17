@@ -5,9 +5,9 @@ import { getSelectedModules } from "../../../../../../../actions/adminActions"
 
 const AdditionalModulesTable = ({ setSelectedModule, setSurveyModuleId }) => {
   const dispatch = useDispatch()
-  const modulesData = useSelector((store) => store.getSelectedModules)
-  const clientId = useSelector((store) => store.saveClientIdForSurveys.data)
-  const surveyId = useSelector((store) => store.saveSurveyId.data)
+  const modulesData = useSelector((store) => store?.getSelectedModules)
+  const clientId = useSelector((store) => store?.saveClientIdForSurveys?.data)
+  const surveyId = useSelector((store) => store?.saveSurveyId?.data)
   useEffect(() => {
     dispatch(getSelectedModules(clientId, surveyId))
   }, [])
@@ -28,10 +28,10 @@ const AdditionalModulesTable = ({ setSelectedModule, setSurveyModuleId }) => {
                     type="radio"
                     name="modules"
                     value="select"
-                    defaultChecked={record.survey_module_id === 3}
+                    defaultChecked={record?.survey_module_id === 3}
                     onClick={() => {
-                      setSurveyModuleId(record.survey_module_id)
-                      setSelectedModule(record.title)
+                      setSurveyModuleId(record?.survey_module_id)
+                      setSelectedModule(record?.title)
                     }}
                   />
                   <span className="label-_text"></span>
@@ -48,6 +48,9 @@ const AdditionalModulesTable = ({ setSelectedModule, setSurveyModuleId }) => {
       dataIndex: "title",
       key: "title",
       className: "drag-visible",
+      render: (text, record) => {
+        return text?.capitalize()
+      },
     },
     {
       title: "Action",
@@ -74,8 +77,10 @@ const AdditionalModulesTable = ({ setSelectedModule, setSurveyModuleId }) => {
     <>
       <Table
         columns={columns}
-        dataSource={modulesData?.data}
-        loading={modulesData?.loading}
+        dataSource={
+          modulesData && modulesData?.data?.length ? modulesData?.data : []
+        }
+        loading={modulesData && modulesData?.loading}
         pagination={false}
         rowKey="index"
       />

@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/alt-text */
 import React, { useContext, useEffect, useLayoutEffect, useState } from "react"
-import { connect } from "react-redux"
+import { connect, useDispatch } from "react-redux"
 import { useHistory } from "react-router"
 import { Link } from "react-router-dom"
 import { notification } from "antd"
@@ -9,8 +9,10 @@ import { AuthContext } from "../../../../context/auth"
 import { setLoginBackground, setMenu } from "../../../../actions/settingsAction"
 import LoaderPage from "../../elements/loader_page"
 import { commonAuthItem } from "../../../common/commonComponents/formItems"
+import { getV2Client } from "../../../../actions/adminActions"
 
 const Login = ({ setLoginBackground, setMenu }) => {
+  const dispatch = useDispatch()
   const checkAuthStatus = async () => {
     try {
       await Auth.currentAuthenticatedUser()
@@ -71,10 +73,12 @@ const Login = ({ setLoginBackground, setMenu }) => {
       storeEmail(formData.email)
       signIn(formData.email, formData.password, true, {}) // user, password, additional info passed to lambda triggers
         .then((user) => {
+          console.log("successful sign in")
+          console.log(user)
           localStorage.setItem("remember", true)
           closeLoginSpinner()
           setLoginBackground(false)
-
+          dispatch(getV2Client())
           if (user.challengeName === "NEW_PASSWORD_REQUIRED") {
             history.push("/updatepassword")
             closeLoginSpinner()

@@ -56,7 +56,7 @@ const TopModulesActions = ({
                   className="btn-dash drop has-icn"
                   onClick={() => setDrawerQuestions(true)}
                 >
-                  Add new question
+                  Add/Edit question
                   <span className="cxv-create-l-icn"></span>
                 </button>
               </div>

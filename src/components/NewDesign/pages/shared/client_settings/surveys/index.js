@@ -5,7 +5,7 @@ import React, {
   useLayoutEffect,
   useContext,
 } from "react"
-import { Space, Table, Button, Input } from "antd"
+import { Space, Table, Button, Input, notification } from "antd"
 import Highlighter from "react-highlight-words"
 import { Link } from "react-router-dom"
 import CustomSelect from "../../../../elements/custom_select"
@@ -15,9 +15,17 @@ import BreadcrumbDashboard from "../../../../elements/breadcrumb_dashboard"
 import TopFilter from "../../../../elements/top_filter_dashboard"
 import { useDispatch } from "react-redux"
 import { AuthContext } from "../../../../../../context/auth"
-import { surveysManagementAction } from "../../../../../../actions/adminActions"
+import {
+  getSurveysMetrics,
+  surveysManagementAction,
+} from "../../../../../../actions/adminActions"
 import { useSelector } from "react-redux"
 import moment from "moment"
+import {
+  saveClientName,
+  saveSurveyId,
+} from "../../../../../../actions/surveysManagement"
+import { saveClientIdForSurveys } from "../../../../../../actions/clientManagement"
 
 const SurveysSettings = () => {
   const dispatch = useDispatch()
@@ -25,10 +33,10 @@ const SurveysSettings = () => {
 
   const [surveyType, setSurveyType] = useState(0)
   const surveysData = useSelector((store) => store.surveysManagement)
+  const surveyMetrics = useSelector((store) => store.getSurveysMetrics)
   // HOOKS
   const [pageNumber, setPageNumber] = useState(1)
   const [surveyStatus, setSurveyStatus] = useState("live")
-  const surveyRef = useRef(0)
   const { role } = useContext(AuthContext)
 
   // Getting surveys data from the server
@@ -40,6 +48,7 @@ const SurveysSettings = () => {
         pageNumber: tablePageNumber,
       })
     )
+    dispatch(getSurveysMetrics())
   }
 
   // This switch case structure below this comment controls the survey types and gives values that send to server.
@@ -60,13 +69,16 @@ const SurveysSettings = () => {
         setSurveyStatus("in build")
         break
       case 3:
-        setSurveyStatus("")
+        setSurveyStatus("closing today")
         break
       case 4:
-        setSurveyStatus("")
+        setSurveyStatus("closing tomorrow")
         break
       case 5:
-        setSurveyStatus("")
+        setSurveyStatus("demo")
+        break
+      case 6:
+        setSurveyStatus("suspended")
         break
       default:
         setSurveyType("")
@@ -76,6 +88,8 @@ const SurveysSettings = () => {
 
   useLayoutEffect(() => {
     determineSurveyStatus(surveyType)
+    console.log(surveyStatus)
+    console.log("METRICS", surveyMetrics)
     console.log(surveyStatus)
   }, [surveyType])
 
@@ -322,11 +336,38 @@ const SurveysSettings = () => {
                 <ul>
                   {surveyType === 0 && (
                     <li>
-                      <button>Survey link</button>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            window.location.origin +
+                              "/survey?" +
+                              `name=${record.url}&` +
+                              `id=${record.id}&` +
+                              `code=${record.code}&` +
+                              `referance=${record.access}`
+                          )
+                          notification.success({
+                            message: "Survey link copied!",
+                          })
+                        }}
+                      >
+                        Survey link
+                      </button>
                     </li>
                   )}
                   <li>
-                    <Link to="/create-survey">Edit</Link>
+                    <Link
+                      to="/create-survey"
+                      onClick={() => {
+                        console.log(record, "record")
+
+                        dispatch(saveSurveyId(record.id))
+                        dispatch(saveClientName(record.title))
+                        dispatch(saveClientIdForSurveys(record.client_id))
+                      }}
+                    >
+                      Edit
+                    </Link>
                   </li>
                   {surveyType === 0 && (
                     <li>
@@ -386,10 +427,20 @@ const SurveysSettings = () => {
       <div className="n__card hast__table mt-0">
         <div className="n__body">
           <div className="row clearfix top-info">
-            <div className="col-lg-12 d-flex align-center">
-              <BreadcrumbDashboard isShow={false} />
+            <div className="col-lg-12 d-flex align-center justify-content-between">
               <h3>Surveys</h3>
+              <Button classList="ml-auto">
+                <Link
+                  to="/create-survey"
+                  onClick={() => {
+                    dispatch(saveSurveyId(null))
+                  }}
+                >
+                  Create survey
+                </Link>
+              </Button>
             </div>
+            {/* make this align to right */}
           </div>
 
           <div className="row clearfix">
@@ -404,9 +455,8 @@ const SurveysSettings = () => {
                     setPageNumber(pagination.current)
                     dispatch(
                       surveysManagementAction({
-                        surveyStatus: "live",
-                        // TODO: clientId has to be dynamic
-                        clientId: "0",
+                        surveyStatus: "in build",
+                        clientId: clientId,
                         pageNumber: pagination.current,
                       })
                     )

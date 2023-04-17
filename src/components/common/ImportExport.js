@@ -581,7 +581,6 @@ export default function ImportExport(props) {
         setSelectedColumn(mergeableColumn)
         break
       case "survey_accepted_emails":
-        console.log("here", columnsSurveyEmail)
         setSelectedColumn([...columnsSurveyEmail])
         break
       case "survey_specific_translations":

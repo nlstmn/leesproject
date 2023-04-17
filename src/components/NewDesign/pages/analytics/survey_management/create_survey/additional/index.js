@@ -20,39 +20,39 @@ const AdditionalSettings = () => {
 
               {/* TODO: commented out parts will implement in next pr */}
 
-              {/* <div className="n_table pr__10 center_labels first_not_center second_not_center third_not_center respo">
+              <div className="n_table pr__10 center_labels first_not_center second_not_center third_not_center respo">
                 <AdditionalModulesTable
                   setSelectedModule={setSelectedModule}
                   surveyModuleId={surveyModuleId}
                   setSurveyModuleId={setSurveyModuleId}
                 />
-              </div> */}
+              </div>
             </div>
             {surveyModuleId !== null && (
               <div className="col-lg-4 col_b_r mt-3">
                 <span className="card_desc">
                   Selected pages of{" "}
-                  <strong>{selectedModule.toUpperCase()}</strong> module
+                  <strong>{selectedModule?.toUpperCase()}</strong> module
                 </span>
-                {/* <div className="n_table pr__10 center_labels first_not_center second_not_center third_not_center respo">
+                <div className="n_table pr__10 center_labels first_not_center second_not_center third_not_center respo">
                   <AdditionalPagesTable
                     setSelectedPage={setSelectedPage}
                     setPageId={setPageId}
                     surveyModuleId={surveyModuleId}
                   />
-                </div> */}
+                </div>
               </div>
             )}
             <div className="col-lg-4 col_b_r col_b_rr mt-3">
               <span className="card_desc">
                 Selected questions of{" "}
-                <strong>{selectedPage.toUpperCase()}</strong> page
+                <strong>{selectedPage?.toUpperCase()}</strong> page
               </span>
-              {/* <div className="n_table pr__10 center_labels first_not_center second_not_center third_not_center respo">
+              <div className="n_table pr__10 center_labels first_not_center second_not_center third_not_center respo">
                 {pageId !== null && (
                   <AdditionalQuestionsTable pageId={pageId} />
                 )}
-              </div> */}
+              </div>
             </div>
           </div>
         </div>

@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react"
 import DemographicsCard from "./demographics_card"
 import { useDispatch, useSelector } from "react-redux"
-import { getOtherSurveySetupAction } from "../../../../../../actions/adminActions"
+import {
+  getOtherSurveySetupAction,
+  surveySetupFormData,
+} from "../../../../../../actions/adminActions"
 import {
   sortableContainer,
   sortableElement,
@@ -18,6 +21,12 @@ const DemographicsSettings = ({
   const demographicsData = useSelector(
     (store) => store.getOtherSurveySetupData.data.demographics
   )
+  const optionsData = useSelector(
+    (store) => store.getOtherSurveySetupData.data.selectedOptions
+  )
+  const additionalQuestionData = useSelector(
+    (store) => store.getOtherSurveySetupData.data.additionalQuestions
+  )
   const surveyId = useSelector((store) => store.saveSurveyId.data)
 
   // useState Hook that Sets All Card Datas
@@ -32,11 +41,41 @@ const DemographicsSettings = ({
   }, [])
 
   const [isItems, setItems] = useState(demographicsData)
+  const [additionals, setAdditionals] = useState(additionalQuestionData)
+  const [selections, setSelections] = useState(optionsData)
 
   useEffect(() => {
-    setItems(demographicsData)
+    setItems(
+      demographicsData
+        ?.sort((a, b) => a.position - b.position)
+        ?.map((item) => {
+          return { ...item, type: "demographics" }
+        })
+    )
   }, [demographicsData])
+  useEffect(() => {
+    setAdditionals(
+      additionalQuestionData
+        ?.sort((a, b) => a.position - b.position)
+        ?.map((item) => {
+          return { ...item, type: "additional" }
+        })
+    )
+  }, [additionalQuestionData])
+  useEffect(() => {
+    setSelections(optionsData)
+  }, [optionsData])
+  useEffect(() => {
+    dispatch(
+      surveySetupFormData({
+        data: { selections, additionals, demographics: isItems },
+        requestType: "demographicsNew",
+        successMessage: "Selected options updated successfully",
+      })
+    )
+  }, [selections, JSON.stringify(additionals), JSON.stringify(isItems)])
 
+  useEffect(() => {}, [additionals, isItems])
   const DragHandle = sortableHandle(({ active }) => (
     <span
       className={`iconx-move grab__table_item ${active && " actived"}`}
@@ -44,36 +83,46 @@ const DemographicsSettings = ({
   ))
 
   const onSortEnd = ({ oldIndex, newIndex }) => {
-    if (newIndex === 0) {
-      // the first element is "unsortable"
-      return
-    }
     setItems(arrayMove(isItems, oldIndex, newIndex))
   }
+  const onSortEndAdditional = ({ oldIndex, newIndex }) => {
+    setAdditionals(arrayMove(additionals, oldIndex, newIndex))
+  }
+  const SortableItem = sortableElement(({ item }) => {
+    return (
+      <DemographicsCard
+        selectedOptions={selections}
+        setSelectedOptions={setSelections}
+        title={item.heading}
+        //if question has survey_id, it is additional demographics question. its order is changeble
+        enabled={item?.survey_id}
+        items={item}
+        drag={<DragHandle />}
+        setParents={item.type == "additional" ? setAdditionals : setItems}
+        parents={item.type == "additional" ? additionals : isItems}
+        setDemographicsQuestionsDrawer={setDemographicsQuestionsDrawer}
+        setDeleteModal={setDeleteModal}
+      />
+    )
+  })
 
-  const SortableItem = sortableElement(({ item }) => (
-    <DemographicsCard
-      title={item.heading}
-      enabled={true}
-      items={item}
-      drag={<DragHandle />}
-      setDemographicsQuestionsDrawer={setDemographicsQuestionsDrawer}
-      setDeleteModal={setDeleteModal}
-    />
-  ))
-
-  const SortableList = sortableContainer(({ items }) => (
-    <div className="cards_sortable">
-      {items?.map((item, index) => (
-        <SortableItem
-          key={`${item.id}`}
-          index={index}
-          item={item}
-          disabled={index === 0 ? true : false}
-        />
-      ))}
-    </div>
-  ))
+  const SortableList = sortableContainer(({ items }) => {
+    return (
+      <div className="cards_sortable">
+        {items?.map((item, index) => {
+          return (
+            <SortableItem
+              key={`${item.id}`}
+              enabled={item?.survey_id}
+              index={index}
+              item={item}
+              disabled={index === 0 ? true : false}
+            />
+          )
+        })}
+      </div>
+    )
+  })
 
   return (
     <>
@@ -88,18 +137,21 @@ const DemographicsSettings = ({
               axis="xy"
               helperClass="item_sorting"
             />
-
-            {/* {demographicsData !== undefined &&
-              demographicsData.map((value, index) => {
-                console.log(value);
-                return (
-                  <DemographicsCard
-                    title={value.heading}
-                    enabled={true}
-                    items={value}
-                  />
-                );
-              })} */}
+            {additionals?.length > 0 && (
+              <>
+                <h3 className="mt-5">
+                  Additional Questions (including additional demographics
+                  questions)
+                </h3>
+                <SortableList
+                  useDragHandle
+                  items={additionals}
+                  onSortEnd={onSortEndAdditional}
+                  axis="xy"
+                  helperClass="item_sorting"
+                />
+              </>
+            )}
           </div>
         </div>
       </div>

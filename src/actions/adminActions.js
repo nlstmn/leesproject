@@ -1,5 +1,6 @@
 import axios from "axios"
 import { notification } from "antd"
+import { saveSurveyId } from "./surveysManagement"
 export const userManagementDepartmentsAction =
   (urlHeader) => async (dispatch) => {
     dispatch({ type: "Departments_Fetch_Request" })
@@ -314,7 +315,7 @@ export const sendDepartmentsDepartmentsEditAction =
           {
             lang_id:
               localStorage.getItem("selectedClientLang") &&
-              localStorage.getItem("selectedClientLang") !== "undefined"
+                localStorage.getItem("selectedClientLang") !== "undefined"
                 ? localStorage.getItem("selectedClientLang")
                 : 12,
           },
@@ -468,86 +469,87 @@ export const getNotificationManagementAction =
 
 export const clientsManagementAction =
   ({ searchKey = "", pageId = 1, letterOne = "", letterTwo = "", clientId }) =>
-  async (dispatch) => {
-    dispatch({ type: "ClientsManagementSearch_Request" })
-    try {
-      const { data } = await axios.get(
-        `v2admin/clients/${clientId}/clientmanagement`,
-        {
-          params: { searchKey, pageId, letterOne, letterTwo },
-        }
-      )
-      dispatch({
-        type: "ClientsManagementSearch_Success",
-        payload: {
-          clientList: data.clientList,
-          totalClientsCount: data.totalClientCount,
-          clientsCountWithParameter: data.clientsCountWithParameter,
-          totalPageCount: data.totalPageCount,
-        },
-      })
-    } catch (error) {
-      dispatch({ type: "ClientsManagementSearch_Failed", payload: error })
-
-      notification.warning({ message: "Internal Server Error!" })
+    async (dispatch) => {
+      dispatch({ type: "ClientsManagementSearch_Request" })
+      try {
+        const { data } = await axios.get(
+          `v2admin/clients/${clientId}/clientmanagement`,
+          {
+            params: { searchKey, pageId, letterOne, letterTwo },
+          }
+        )
+        dispatch({
+          type: "ClientsManagementSearch_Success",
+          payload: {
+            clientList: data.clientList,
+            totalClientsCount: data.totalClientCount,
+            clientsCountWithParameter: data.clientsCountWithParameter,
+            totalPageCount: data.totalPageCount,
+          },
+        })
+      } catch (error) {
+        dispatch({ type: "ClientsManagementSearch_Failed", payload: error })
+        notification.warning({ message: "Error in search client managament!" })
+      }
     }
-  }
 
 export const surveysManagementAction =
-  ({ surveyStatus = "live", pageNumber = 1, clientId = 1 }) =>
-  async (dispatch) => {
-    dispatch({ type: "SurveysManagement_Request" })
-    try {
-      const { data } = await axios.get(`v2admin/clients/${clientId}/surveys`, {
-        params: { surveyStatus, pageNumber },
-      })
-      dispatch({
-        type: "SurveysManagement_Success",
-        payload: {
-          surveysList: data.result,
-          totalSurveysCount: data.pageDetails.totalCount,
-          totalPageCount: data.pageDetails.totalPageCount,
-        },
-      })
-    } catch (error) {
-      dispatch({ type: "ClientsManagementSearch_Failed", payload: error })
-      notification.warning({ message: "Internal Server Error!" })
+  ({ surveyStatus, pageNumber, clientId, ending }) =>
+    async (dispatch) => {
+      dispatch({ type: "SurveysManagement_Request" })
+      try {
+        const { data } = await axios.get(`v2admin/clients/${clientId}/surveys`, {
+          params: { surveyStatus, pageNumber, ending },
+        })
+        dispatch({
+          type: "SurveysManagement_Success",
+          payload: {
+            surveysList: data.result,
+            totalSurveysCount: data.pageDetails.totalCount,
+            totalPageCount: data.pageDetails.totalPageCount,
+          },
+        })
+      } catch (error) {
+        dispatch({ type: "ClientsManagementSearch_Failed", payload: error })
+        notification.warning({ message: "Error in search client managament!" })
+      }
     }
-  }
 
 export const getSurveySetupAction =
   ({ clientId = 0, tab = "generalSetup" }) =>
-  async (dispatch) => {
-    dispatch({ type: "GetSurveySetupData_Request" })
-    await axios
-      .get(`v2admin/clients/${clientId}/surveys/setup-data`, {
-        params: { tab: tab },
-      })
-      .then((res) => {
-        console.log("RESPONSE", res)
-        dispatch({ type: "GetSurveySetupData_Success", payload: res.data })
-      })
-      .catch((error) => {
-        dispatch({ type: "GetSurveySetupData_Failed", payload: error })
-        notification.warning({ message: "Internal Server Error!" })
-      })
-  }
+    async (dispatch) => {
+      dispatch({ type: "GetSurveySetupData_Request" })
+      await axios
+        .get(`v2admin/clients/${clientId}/surveys/setup-data`, {
+          params: { tab: tab },
+        })
+        .then((res) => {
+          dispatch({ type: "GetSurveySetupData_Success", payload: res.data })
+        })
+        .catch((error) => {
+          dispatch({ type: "GetSurveySetupData_Failed", payload: error })
+
+          notification.warning({
+            message: `Failed to update survey for client ID: ${clientId}. Error: ${error?.message}`,
+          })
+        })
+    }
 export const getOtherSurveySetupAction =
   ({ clientId = 0, tab = "demographics", surveyId = "3499" }) =>
-  async (dispatch) => {
-    dispatch({ type: "GetOtherSurveySetupData_Request" })
-    await axios
-      .get(`v2admin/clients/${clientId}/surveys/${surveyId}`, {
-        params: { tab: tab },
-      })
-      .then((res) => {
-        dispatch({ type: "GetOtherSurveySetupData_Success", payload: res.data })
-      })
-      .catch((error) => {
-        dispatch({ type: "GetOtherSurveySetupData_Failed", payload: error })
-        notification.warning({ message: "Internal Server Error!" })
-      })
-  }
+    async (dispatch) => {
+      dispatch({ type: "GetOtherSurveySetupData_Request" })
+      await axios
+        .get(`v2admin/clients/${clientId}/surveys/${surveyId}`, {
+          params: { tab: tab },
+        })
+        .then((res) => {
+          dispatch({ type: "GetOtherSurveySetupData_Success", payload: res.data })
+        })
+        .catch((error) => {
+          dispatch({ type: "GetOtherSurveySetupData_Failed", payload: error })
+          notification.warning({ message: "Error in getting survey setup data!" })
+        })
+    }
 
 export const dropdownDepartmentsAction = (clientId) => async (dispatch) => {
   dispatch({ type: "DropdownDepartments_Request" })
@@ -561,7 +563,9 @@ export const dropdownDepartmentsAction = (clientId) => async (dispatch) => {
     })
     .catch((error) => {
       dispatch({ type: "DropdownDepartments_Failed", payload: error })
-      notification.warning({ message: "Internal Server Error!" })
+      notification.warning({
+        message: `Failed to update survey for client ID: ${clientId}, Error: ${error?.message}`,
+      })
     })
 }
 
@@ -599,37 +603,69 @@ export const saveClientsMainSettingsAction =
     },
     clientId
   ) =>
-  async (dispatch) => {
-    dispatch({ type: "SaveClientsMainSettings_Request" })
-    try {
-      const response = await axios.post(
-        `v2admin/clients/${clientId}/clientmanagement`,
-        {
-          name: name,
-          industry: parseInt(industry),
-          website: website,
-          language: language,
-          clientRefNo: clientRefNo,
-          invite_code: inviteCode,
-          enable_feedbacks: enableFeedbacks,
-          enable_questions: enableQuestions,
-          enable_xp: enableXp,
-          enable_inside: enableInside,
-          enable_hybrid_future: enableHybridFuture,
-          hybrid_organization_name: hybridOrganizationName,
-        }
-      )
-      dispatch({
-        type: "SaveClientsMainSettings_Success",
-        payload: {
-          response: response,
-        },
-      })
-    } catch (error) {
-      dispatch({ type: "SaveClientsMainSettings_Failed", payload: error })
-      notification.warning({ message: "Internal Server Error!" })
+    async (dispatch) => {
+      dispatch({ type: "SaveClientsMainSettings_Request" })
+      try {
+        const response = await axios.post(
+          `v2admin/clients/${clientId}/clientmanagement`,
+          {
+            name: name,
+            industry: parseInt(industry),
+            website,
+            language,
+            clientRefNo,
+            invite_code: inviteCode,
+            enable_feedbacks: enableFeedbacks,
+            enable_questions: enableQuestions,
+            enable_xp: enableXp,
+            enable_inside: enableInside,
+            enable_hybrid_future: enableHybridFuture,
+            hybrid_organization_name: hybridOrganizationName,
+          }
+        )
+        dispatch({
+          type: "SaveClientsMainSettings_Success",
+          payload: {
+            response,
+          },
+        })
+      } catch (error) {
+        dispatch({ type: "SaveClientsMainSettings_Failed", payload: error })
+        notification.warning({ message: "Internal Server Error!" })
+      }
     }
-  }
+
+export const saveDepartmentsAction =
+  (
+    {
+      parentId = "",
+      language = "",
+      name = ""
+    },
+    clientId
+  ) =>
+    async (dispatch) => {
+      dispatch({ type: "SaveDepartments_Request" })
+      try {
+        const response = await axios.post(
+          `v2admin/clients/${clientId}/departments`,
+          {
+            parentId,
+            language,
+            data: [{ name: name }]
+          }
+        )
+        dispatch({
+          type: "SaveDepartments_Success",
+          payload: {
+            response,
+          },
+        })
+      } catch (error) {
+        dispatch({ type: "SaveDepartments_Failed", payload: error })
+        notification.warning({ message: "Internal Server Error!" })
+      }
+    }
 
 export const updateClientsMainSettingsAction =
   (
@@ -647,36 +683,36 @@ export const updateClientsMainSettingsAction =
       hybridOrganizationName = "",
     }
   ) =>
-  async (dispatch) => {
-    dispatch({ type: "UpdateClientsMainSettings_Request" })
-    try {
-      const response = await axios.put(
-        `v2admin/clients/${clientId}/clientmanagement`,
-        {
-          name: name,
-          industry: parseInt(industry),
-          website: website,
-          clientRefNo: clientRefNo,
-          enable_feedbacks: enableFeedbacks,
-          enable_questions: enableQuestions,
-          enable_xp: enableXp,
-          enable_inside: enableInside,
-          enable_hybrid_future: enableHybridFuture,
-          hybrid_organization_name: hybridOrganizationName,
-        }
-      )
-      dispatch({
-        type: "UpdateClientsMainSettings_Success",
-        payload: {
-          response: response,
-        },
-      })
-      notification.success({ message: "Client data updated successfully." })
-    } catch (error) {
-      dispatch({ type: "UpdateClientsMainSettings_Failed", payload: error })
-      notification.warning({ message: "Failed to Update Clients!" })
+    async (dispatch) => {
+      dispatch({ type: "UpdateClientsMainSettings_Request" })
+      try {
+        const response = await axios.put(
+          `v2admin/clients/${clientId}/clientmanagement`,
+          {
+            name,
+            industry: parseInt(industry),
+            website,
+            clientRefNo,
+            enable_feedbacks: enableFeedbacks,
+            enable_questions: enableQuestions,
+            enable_xp: enableXp,
+            enable_inside: enableInside,
+            enable_hybrid_future: enableHybridFuture,
+            hybrid_organization_name: hybridOrganizationName,
+          }
+        )
+        dispatch({
+          type: "UpdateClientsMainSettings_Success",
+          payload: {
+            response,
+          },
+        })
+        notification.success({ message: "Client data updated successfully." })
+      } catch (error) {
+        dispatch({ type: "UpdateClientsMainSettings_Failed", payload: error })
+        notification.warning({ message: "Failed to Update Clients!" })
+      }
     }
-  }
 
 export const getSurveyLanguagesAction =
   (clientId, surveyId) => async (dispatch) => {
@@ -705,15 +741,14 @@ export const getAllLanguages = (id) => async (dispatch) => {
   }
 }
 
-export const getSurveysMetrics = () => async (dispatch) => {
+export const getSurveysMetrics = (clientId) => async (dispatch) => {
   dispatch({ type: "GetSurveysMetrics_Request" })
   try {
     const { data } = await axios.get(
-      `/v2admin/clients/0/surveys/survey-management/setup-data`
+      `/v2admin/clients/${clientId}/surveys/survey-management/setup-data`
     )
     dispatch({ type: "GetSurveysMetrics_Success", payload: data })
   } catch (error) {
-    console.log("ACTION", error)
     dispatch({ type: "GetSurveysMetrics_Failed", payload: error })
   }
 }
@@ -770,7 +805,7 @@ export const deleteSelectedClient = (clientId) => async (dispatch) => {
       type: "DeleteSelectedClient_Success",
       params: { selectedClient: clientId },
     })
-    console.log(data)
+
     notification.success("Selected client is deleted successfully.")
   } catch (error) {
     dispatch({ type: "DeleteSelectedClient_Failed", payload: error })
@@ -857,7 +892,73 @@ export const getSelectedQuestions =
       dispatch({ type: "GetSelectedQuestions_Failed", payload: error })
     }
   }
+export const putSurveySetupAction =
+  ({ clientId = 0, surveyId, type, data, successMessage }) =>
+    async (dispatch) => {
+      dispatch({ type: "PutSurveySetupData_Request" })
+      await axios
+        .put(`/admin/clients/${clientId}/surveys/${surveyId}`, {
+          data,
+          type,
+        })
+        .then((res) => {
+          notification.success({ message: successMessage })
+        })
+        .catch((error) => {
+          notification.warning({
+            message: `Failed to update survey for client ID: ${clientId}, survey ID: ${surveyId}. Error: ${error?.message}`,
+          })
+        })
+    }
+export const CreateSurveyAction =
+  ({ clientId = 0, data, successMessage }) =>
+    async (dispatch) => {
+      console.log("create survey triggered", data, clientId)
+      dispatch({ type: "CreateSurveyAction_Request" })
+      await axios
+        .post(`/admin/clients/${clientId}/surveys`, data)
+        .then((res) => {
+          dispatch(saveSurveyId(res.data))
 
+          notification.success({ message: successMessage })
+        })
+        .catch((error) => {
+          notification.warning({
+            message: `Failed to update survey for client ID: ${clientId},  Error: ${error?.message}`,
+          })
+        })
+    }
+export const putSurveySetupAdditionalQuestion =
+  (data, close, clientId, surveyId) => async (dispatch) => {
+    dispatch({ type: "PutSurveySetupDataAdditional_Request" })
+    await axios
+      .put(`/admin/clients/${clientId}/surveys/${surveyId}/additional`, data)
+      .then((res) => {
+        close()
+
+        notification.success({
+          message: `Success`,
+        })
+      })
+      .catch((error) => {
+        notification.warning({
+          message: `Failed to update survey for client ID: ${clientId}, survey ID: ${surveyId}. Error: ${error?.message}`,
+        })
+      })
+  }
+
+export const surveySetupFormData = (data) => async (dispatch) => {
+  dispatch({ type: "SurveySetupFormData", payload: data })
+}
+export const surveySetupDrawerData = (data) => async (dispatch) => {
+  dispatch({ type: "SurveySetupDrawerData", payload: data })
+}
+export const surveySetupGeneralData = (data) => async (dispatch) => {
+  dispatch({ type: "SurveySetupGeneralData", payload: data })
+}
+export const selectedSurveyStatusData = (data) => async (dispatch) => {
+  dispatch({ type: "SelectedSurveyStatusData", payload: data })
+}
 export const postNewLocation = (clientId, locationData) => async (dispatch) => {
   dispatch({ type: "PostNewLocation_Request" })
   try {
@@ -868,9 +969,6 @@ export const postNewLocation = (clientId, locationData) => async (dispatch) => {
     )
     dispatch({ type: "PostNewLocation_Success", payload: data })
     notification.success({ message: "Location added successfully!" })
-    setTimeout(() => {
-      window.location.reload()
-    }, 3000)
   } catch (error) {
     dispatch({ type: "PostNewLocation_Failed", payload: error })
     notification.warning({
@@ -889,13 +987,70 @@ export const updateLocation = (clientId, locationData) => async (dispatch) => {
     )
     dispatch({ type: "UpdateLocation_Success", payload: data })
     notification.success({ message: "Location updated successfully!" })
-    setTimeout(() => {
-      window.location.reload()
-    }, 3000)
   } catch (error) {
     dispatch({ type: "UpdateLocation_Failed", payload: error })
     notification.warning({
       message: "Error occured while updating location!",
+    })
+  }
+}
+
+export const getRegions = (clientId) => async (dispatch) => {
+  dispatch({ type: "GetRegions_Request" })
+  try {
+    const { data } = await axios.get(
+      `/v2admin/clients/${clientId}/locations/regions`
+    )
+    dispatch({ type: "GetRegions_Success", payload: data })
+  } catch (error) {
+    dispatch({ type: "GetRegions_Failed", payload: error })
+    notification.warning({
+      message: "Error occured while fetching new regions!",
+    })
+  }
+}
+
+export const getCountries = (clientId, regionId) => async (dispatch) => {
+  dispatch({ type: "GetCountries_Request" })
+  try {
+    const { data } = await axios.get(
+      `/v2admin/clients/${clientId}/locations/countries`,
+      { params: { regionId } }
+    )
+    dispatch({ type: "GetCountries_Success", payload: data })
+  } catch (error) {
+    dispatch({ type: "GetCountries_Failed", payload: error })
+    notification.warning({
+      message: "Error occured while fetching new countries!",
+    })
+  }
+}
+
+export const getCities = (clientId, countryId) => async (dispatch) => {
+  dispatch({ type: "GetCities_Request" })
+  try {
+    const { data } = await axios.get(
+      `/v2admin/clients/${clientId}/locations/cities`,
+      { params: { countryId } }
+    )
+    dispatch({ type: "GetCities_Success", payload: data })
+  } catch (error) {
+    dispatch({ type: "GetCities_Failed", payload: error })
+    notification.warning({
+      message: "Error occured while fetching new cities!",
+    })
+  }
+}
+
+export const getV2Client = () => async (dispatch) => {
+  dispatch({ type: "GetV2Client_Request" })
+  try {
+    const { data } = await axios.get(`/v2client`)
+    dispatch({ type: "GetV2Client_Success", payload: data })
+  } catch (error) {
+    dispatch({ type: "GetV2Client_Failed", payload: "error" })
+    notification.warning({
+      message: "Error occured while fetching client!",
     })
   }
 }

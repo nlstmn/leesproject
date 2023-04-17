@@ -297,18 +297,18 @@ const MainSettings = ({
                       maxCount={1}
                       progress={{ strokeWidth: 2, showInfo: false }}
                       showUploadList={false}
+                      showRemoveIcon={true}
+                      onRemove={() => {
+                        alert("Delete?")
+                      }}
                     >
                       {previewImage !== "" && imagePreviewExists ? (
                         <img
+                          className="preview_image_container"
                           src={previewImage}
                           onError={(e) => {
                             e.target.onerror = null
                             setImagePreviewExists(false)
-                          }}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            borderRadius: "inherit",
                           }}
                           alt="Preview"
                         />

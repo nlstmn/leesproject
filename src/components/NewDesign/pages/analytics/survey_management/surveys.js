@@ -26,31 +26,39 @@ import {
   saveSurveyId,
 } from "../../../../../actions/surveysManagement"
 import { saveClientIdForSurveys } from "../../../../../actions/clientManagement"
+import { notification } from "antd"
 
 const SurveysManagement = () => {
   const dispatch = useDispatch()
+  const clientData = useSelector((store) => store.getV2Client)
   const [surveyType, setSurveyType] = useState(0)
+  const [dayParameter, setDayParameter] = useState(0)
   const surveysData = useSelector((store) => store.surveysManagement)
   const surveyMetrics = useSelector((store) => store.getSurveysMetrics)
-
   // HOOKS
   const [pageNumber, setPageNumber] = useState(1)
   const [surveyStatus, setSurveyStatus] = useState("live")
-  const surveyRef = useRef(0)
   const { role } = useContext(AuthContext)
-  const surveyId = useSelector((store) => store.saveSurveyId)
+  const surveyId = useSelector((store) => store?.saveSurveyId)
+  const clientId = useSelector((store) => store?.saveClientIdForSurveys?.data)
 
   // Getting surveys data from the server
   const getSurveysData = (tablePageNumber) => {
-    dispatch(
-      surveysManagementAction({
-        surveyStatus: surveyStatus,
-        // TODO: clientId has to be dynamic
-        clientId: "0",
-        pageNumber: tablePageNumber,
-      })
-    )
-    dispatch(getSurveysMetrics())
+    !["closing today", "closing tomorrow"].includes(surveyType)
+      ? dispatch(
+          surveysManagementAction({
+            surveyStatus: surveyStatus,
+            clientId: clientData.data.id,
+            pageNumber: tablePageNumber,
+          })
+        )
+      : surveysManagementAction({
+          surveyStatus: null,
+          clientId: clientData.data.id,
+          pageNumber: tablePageNumber,
+          ending: dayParameter,
+        })
+    dispatch(getSurveysMetrics(clientData.data.id ?? 0))
   }
 
   // This switch case structure below this comment controls the survey types and gives values that send to server.
@@ -71,13 +79,16 @@ const SurveysManagement = () => {
         setSurveyStatus("in build")
         break
       case 3:
-        setSurveyStatus("")
+        setSurveyStatus("closing today")
         break
       case 4:
-        setSurveyStatus("")
+        setSurveyStatus("closing tomorrow")
         break
       case 5:
-        setSurveyStatus("")
+        setSurveyStatus("demo")
+        break
+      case 6:
+        setSurveyStatus("suspended")
         break
       default:
         setSurveyType("")
@@ -87,19 +98,22 @@ const SurveysManagement = () => {
 
   useLayoutEffect(() => {
     determineSurveyStatus(surveyType)
-    console.log(surveyStatus)
-    console.log("METRICS", surveyMetrics)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [surveyType])
 
   useLayoutEffect(() => {
+    console.log("CLIENT ID DATA", clientData)
     document.body.classList.add("temp__class")
   }, [])
 
-  // For initial page fetching
+  // Getting survey data according to the survey type
   useLayoutEffect(() => {
     getSurveysData(pageNumber)
-  }, [surveyType])
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageNumber, surveyStatus])
+  useLayoutEffect(() => {
+    setPageNumber(1)
+  }, [surveyStatus])
   // Table Drop Functions
   const [actionKey, setActionKey] = useState("")
   const isAction = (record) => record.id === actionKey
@@ -233,12 +247,12 @@ const SurveysManagement = () => {
   const columns = [
     role === "Leesman Admin"
       ? {
-          title: "ID",
-          dataIndex: "id",
-          key: "id",
-          ellipsis: true,
-          width: "50px",
-        }
+        title: "ID",
+        dataIndex: "id",
+        key: "id",
+        ellipsis: true,
+        width: "50px",
+      }
       : { className: "d-none" },
     {
       title: "Code",
@@ -329,7 +343,7 @@ const SurveysManagement = () => {
       render: (_, record) => {
         const action = isAction(record)
         return (
-          <div className="action_btns" style={{marginRight: "10px"}}>
+          <div className="action_btns mr-10px">
             <div className={`drop__btn ${action ? " show" : ""} `}>
               <button
                 className="icon__btn"
@@ -337,8 +351,8 @@ const SurveysManagement = () => {
                   action
                     ? () => setActionKey("")
                     : () => {
-                        openDrop(record)
-                      }
+                      openDrop(record)
+                    }
                 }
               >
                 <span
@@ -347,10 +361,26 @@ const SurveysManagement = () => {
                 ></span>
               </button>
               <div className="drop__menu">
-                <ul style={{border:"1px solid", paddingLeft:"4px", borderRadius:"9px"}}>
+                <ul className="drop-menu-new-ul">
                   {surveyType === 0 && (
                     <li>
-                      <button>Survey link</button>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            window.location.origin +
+                              "/survey?" +
+                              `name=${record.url}&` +
+                              `id=${record.id}&` +
+                              `code=${record.code}&` +
+                              `referance=${record.access}`
+                          )
+                          notification.success({
+                            message: "Survey link copied!",
+                          })
+                        }}
+                      >
+                        Survey link
+                      </button>
                     </li>
                   )}
                   <li>
@@ -432,7 +462,6 @@ const SurveysManagement = () => {
           <div className="col-lg-12">
             <TopFilter
               // Filter items
-              surveyRef={surveyRef}
               setSurveyType={setSurveyType}
               isClosedSurveys={true}
               AllLiveSurveys={true}
@@ -446,13 +475,14 @@ const SurveysManagement = () => {
                 scroll={{ x: 1000 }}
                 ellipsis
                 dataSource={surveysData.surveysList}
+                key={Math.random()}
                 onChange={(pagination, _) => {
                   setPageNumber(pagination.current)
                   dispatch(
                     surveysManagementAction({
-                      surveyStatus: "live",
+                      surveyStatus: surveyStatus,
                       // TODO: clientId has to be dynamic
-                      clientId: "0",
+                      clientId: clientData.data.id,
                       pageNumber: pagination.current,
                     })
                   )

@@ -11,7 +11,6 @@ const AuthContext = React.createContext()
 
 function AuthProvider({ children }, props) {
   const state = useAuth()
-
   return <AuthContext.Provider value={state}>{children}</AuthContext.Provider>
 }
 
@@ -31,7 +30,6 @@ const useAuth = () => {
           `Bearer ${user.signInUserSession.accessToken.jwtToken}`,
           `${user.signInUserSession.idToken.jwtToken}`
         )
-
         dispatch({
           type: "FETCH_USER_DATA_SUCCESS",
           payload: {

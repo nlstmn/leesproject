@@ -1,7 +1,10 @@
 import { Button, Drawer, Tree, Space } from "antd"
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { getAllLanguages } from "../../../../../../actions/adminActions"
+import {
+  getAllLanguages,
+  surveySetupDrawerData,
+} from "../../../../../../actions/adminActions"
 
 const DrawerTranslations = ({
   isTranslationsDrawer,
@@ -13,11 +16,35 @@ const DrawerTranslations = ({
   const dispatch = useDispatch()
   // Commented, will use
   // const languagesData = useSelector((store) => store.getAllLanguages)
+  const drawerData = useSelector(
+    (store) => store.setSurveySetupDrawerData?.data
+  )
   const surveyId = useSelector((store) => store.saveSurveyId.data)
-
+  const selectedLanguages = useSelector(
+    (store) => store.setSurveySetupDrawerData?.data?.selectedLanguages
+  )
+  const selectedTranslation = useSelector(
+    (store) => store.setSurveySetupDrawerData?.data?.selectedTranslation
+  )
+  const [selectedLanguage, setSelectedLanguage] = useState(12)
+  const [label, setLabel] = useState([])
+  const [currentTranslation, setCurrentTranslation] = useState([])
   useEffect(() => {
     dispatch(getAllLanguages(surveyId))
   }, [])
+  useEffect(() => {
+    setCurrentTranslation(selectedTranslation)
+  }, [selectedTranslation])
+  useEffect(() => {
+    // JSON.stringify(currentTranslation) !==
+    //   JSON.stringify(selectedTranslation) &&
+    // dispatch(
+    //   surveySetupDrawerData({
+    //     ...drawerData,
+    //     selectedTranslation: currentTranslation,
+    //   })
+    // )
+  }, [currentTranslation])
 
   return (
     <>
@@ -63,18 +90,84 @@ const DrawerTranslations = ({
                 <div className="n__divider"></div>
               </div>
             </div>
-            {/* {languagesData.map((item)=>{
-                return (
-                  <div className="col-lg-12">
-                  <div className="n__form_control">
-                    <label className="n__form_label">
-                      <span>{item.label}</span>
-                      <input type="text" name="name" className="n__form_input" />
-                    </label>
-                  </div>
-                </div>
-                );
-              })} */}
+
+            <div className="col-lg-12 col-md-12">
+              <div className="n__form_select">
+                <select
+                  onChange={(e) => {
+                    setSelectedLanguage(e.target.value)
+                  }}
+                  className="form-control"
+                  value={selectedLanguage}
+                >
+                  {selectedLanguages?.map((i) => {
+                    return <option value={i.id}>{i?.label}</option>
+                  })}
+                </select>
+              </div>
+            </div>
+            <div className="col-lg-12 col-md-12">
+              <div className="form-group">
+                <span className="light">
+                  {"English translation: " +
+                    currentTranslation?.translations?.filter(
+                      (i) => i.language_id == 12
+                    )[0]?.label}
+                </span>
+              </div>
+            </div>
+            <div className="col-lg-12 col-md-12">
+              <div className="form-group">
+                <span className="light">
+                  {"selected language translation: " +
+                    currentTranslation?.translations?.filter(
+                      (i) => i.language_id == selectedLanguage
+                    )[0]?.label}
+                </span>
+              </div>
+            </div>
+            <div className="col-lg-6 col-md-6">
+              <div className="form-group">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLabel(label + " (Organisation name)")
+                  }}
+                  className="btn btn-sm btn-primary"
+                  style={{ marginLeft: "15px" }}
+                >
+                  Add Organisation code
+                </button>
+              </div>
+            </div>
+            <div className="col-lg-6 col-md-6">
+              <div className="form-group">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLabel(label + " (Workplace X / Other workplace)")
+                  }}
+                  className="btn btn-sm btn-primary"
+                  style={{ marginLeft: "15px" }}
+                >
+                  Add location code
+                </button>
+              </div>
+            </div>
+            <div className="col-lg-12 col-md-12">
+              <div className="form-group">
+                {/* bildirim adı */}
+
+                <textarea
+                  onChange={(e) => setLabel(e.target.value)}
+                  value={label}
+                  style={{ minHeight: "200px" }}
+                  type="text"
+                  className="n__form_input"
+                  placeholder="update/create translation"
+                />
+              </div>
+            </div>
           </div>
         </div>
 

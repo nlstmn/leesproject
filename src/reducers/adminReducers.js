@@ -1051,6 +1051,41 @@ const saveClientsMainSettings = (
       return state
   }
 }
+
+const saveDepartmentsSettings = (
+  state = {
+    loading: false,
+    response: {},
+    error: null,
+  },
+  action
+) => {
+  switch (action.type) {
+    case "SaveDepartments_Request":
+      return {
+        ...state,
+        loading: true,
+      }
+
+    case "SaveDepartments_Success":
+      return {
+        ...state,
+        loading: false,
+        response: action.payload.response,
+      }
+
+    case "SaveDepartments_Failed":
+      return {
+        ...state,
+        loading: false,
+        response: {},
+        error: action.payload,
+      }
+    default:
+      return state
+  }
+}
+
 const updateClientsMainSettings = (
   state = {
     loading: false,
@@ -1121,6 +1156,19 @@ const getSurveySetupData = (state = { loading: false, data: {} }, action) => {
       return { ...state, loading: false, data: action.payload }
     case "GetSurveySetupData_Failed":
       return { ...state, loading: false, error: action.payload.error }
+    default:
+      return state
+  }
+}
+// Survey Setup Put Data
+const putSurveySetupData = (state = { loading: false, data: {} }, action) => {
+  switch (action.type) {
+    case "PutSurveySetupData_Request":
+      return { ...state, loading: true }
+    case "PutSurveySetupData_Success":
+      return { ...state, loading: false }
+    case "PutSurveySetupData_Failed":
+      return { ...state, loading: false }
     default:
       return state
   }
@@ -1384,6 +1432,100 @@ const getSelectedQuestions = (state = { loading: false, data: [] }, action) => {
       return state
   }
 }
+const setSurveySetupFormData = (
+  state = { loading: false, data: [] },
+  action
+) => {
+  if (action.type === "SurveySetupFormData") {
+    return { ...state, loading: false, data: action.payload }
+  } else {
+    return {
+      loading: false,
+      data: state?.data || [],
+    }
+  }
+}
+const setSurveySetupDrawerData = (
+  state = { loading: false, data: [] },
+  action
+) => {
+  if (action.type === "SurveySetupDrawerData") {
+    return { ...state, loading: false, data: action.payload }
+  } else {
+    return {
+      loading: false,
+      data: state?.data || [],
+    }
+  }
+}
+const setSurveySetupGeneralData = (
+  state = { loading: false, data: [] },
+  action
+) => {
+  if (action.type === "SurveySetupGeneralData") {
+    return { ...state, loading: false, data: action.payload }
+  } else {
+    return {
+      loading: false,
+      data: state?.data || [],
+    }
+  }
+}
+const setSelectedSurveyStatusData = (
+  state = { loading: false, data: [] },
+  action
+) => {
+  if (action.type === "SelectedSurveyStatusData") {
+    return { ...state, loading: false, data: action.payload }
+  } else {
+    return {
+      loading: false,
+      data: state?.data || [],
+    }
+  }
+}
+const getRegions = (state = { loading: false, data: [] }, action) => {
+  switch (action.type) {
+    case "GetRegions_Request":
+      return { ...state, loading: true }
+    case "GetRegions_Success":
+      return { ...state, loading: false, data: action.payload }
+    case "GetRegions_Failed":
+      return { ...state, loading: false, error: action.payload }
+    case "Reset_Regions_Data":
+      return { loading: false, data: [] }
+    default:
+      return state
+  }
+}
+const getCountries = (state = { loading: false, data: [] }, action) => {
+  switch (action.type) {
+    case "GetCountries_Request":
+      return { ...state, loading: true }
+    case "GetCountries_Success":
+      return { ...state, loading: false, data: action.payload }
+    case "GetCountries_Failed":
+      return { ...state, loading: false, error: action.payload }
+    case "Reset_Countries_Data":
+      return { loading: false, data: [] }
+    default:
+      return state
+  }
+}
+const getCities = (state = { loading: false, data: [] }, action) => {
+  switch (action.type) {
+    case "GetCities_Request":
+      return { ...state, loading: true }
+    case "GetCities_Success":
+      return { ...state, loading: false, data: action.payload }
+    case "GetCities_Failed":
+      return { ...state, loading: false, error: action.payload }
+    case "Reset_Cities_Data":
+      return { loading: false, data: [] }
+    default:
+      return state
+  }
+}
 
 const postNewLocation = (
   state = { loading: false, data: {}, error: null },
@@ -1415,6 +1557,21 @@ const updateLocation = (
       return state
   }
 }
+const getV2Client = (
+  state = { loading: false, data: {}, error: null },
+  action
+) => {
+  switch (action.type) {
+    case "GetV2Client_Request":
+      return { ...state, loading: true }
+    case "GetV2Client_Success":
+      return { ...state, loading: false, data: action.payload }
+    case "GetV2Client_Failed":
+      return { ...state, loading: false, error: action.payload }
+    default:
+      return state
+  }
+}
 
 export {
   userManagementDepartments,
@@ -1440,6 +1597,7 @@ export {
   getNotificationManagement,
   exportClients,
   saveClientsMainSettings,
+  saveDepartmentsSettings,
   surveysManagement,
   dropdownDepartments,
   getSurveySetupData,
@@ -1457,6 +1615,15 @@ export {
   getSelectedPages,
   getSelectedQuestions,
   updateClientsMainSettings,
+  putSurveySetupData,
+  setSurveySetupFormData,
+  setSurveySetupDrawerData,
+  setSurveySetupGeneralData,
+  getRegions,
+  getCountries,
+  getCities,
   postNewLocation,
+  getV2Client,
   updateLocation,
+  setSelectedSurveyStatusData,
 }

@@ -6,14 +6,15 @@ import { getAdditionalModules } from "../../../../../../../actions/adminActions"
 const DrawerModules = ({ isModulesDrawer, setModulesDrawer, title }) => {
   const dispatch = useDispatch()
   const modulesSelector = useSelector((store) => store.getAdditionalModules)
+  const formData = useSelector((store) => store.setSurveySetupFormData.data)
+
   useEffect(() => {
     dispatch(getAdditionalModules(2))
   }, [])
-  const [expandedKeys, setExpandedKeys] = useState([
-    "office",
-    "Leesman 3rd Space Module",
-    "Leesman Alignment Module",
-  ])
+
+  useEffect(() => {
+    setSelectedKeys(formData?.surveyModules?.map((i) => i.id))
+  }, [formData])
 
   const [checkedKeys, setCheckedKeys] = useState()
   modulesSelector.data.surveyModules !== undefined &&
@@ -24,53 +25,13 @@ const DrawerModules = ({ isModulesDrawer, setModulesDrawer, title }) => {
       .filter((item2) => {
         return Number.isInteger(item2)
       })
-  const [selectedKeys, setSelectedKeys] = useState([])
-  const [autoExpandParent, setAutoExpandParent] = useState(true)
-
-  const onExpand = (expandedKeysValue) => {
-    console.log("onExpand", expandedKeysValue) // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-    // or, you can remove all expanded children keys.
-
-    setExpandedKeys(expandedKeysValue)
-    setAutoExpandParent(false)
-  }
-
-  const onCheck = (checkedKeysValue) => {
-    console.log("onCheck", checkedKeysValue)
-    setCheckedKeys(checkedKeysValue)
-  }
+  const [selectedKeys, setSelectedKeys] = useState(
+    formData?.surveyModules?.map((i) => i.id)
+  )
 
   const onSelect = (selectedKeysValue, info) => {
-    console.log("onSelect", info)
     setSelectedKeys(selectedKeysValue)
   }
-
-  const treeData = [
-    {
-      title: "office",
-      key: "office",
-    },
-    {
-      title: "home",
-      key: "home",
-    },
-    {
-      title: "office + home",
-      key: "office + home",
-    },
-    {
-      title: "Leesman 3rd Space Module",
-      key: "Leesman 3rd Space Module",
-    },
-    {
-      title: "Leesman Alignment Module",
-      key: "Leesman Alignment Module",
-    },
-    {
-      title: "Leesman Days in Workplace Module",
-      key: "Leesman Days in Workplace Module",
-    },
-  ]
 
   return (
     <>
@@ -128,14 +89,16 @@ const DrawerModules = ({ isModulesDrawer, setModulesDrawer, title }) => {
                 // expandedKeys={expandedKeys}
                 // autoExpandParent={autoExpandParent}
                 // onCheck={onCheck}
-                checkedKeys={checkedKeys}
+                checkedKeys={selectedKeys}
                 onSelect={onSelect}
                 selectedKeys={selectedKeys}
                 treeData={
                   modulesSelector.data.surveyModules !== undefined &&
-                  modulesSelector.data.surveyModules.map((item) => {
-                    return { title: item.name, key: item.id }
-                  })
+                  modulesSelector.data.surveyModules
+                    ?.sort((a, b) => a.id - b.id)
+                    .map((item) => {
+                      return { title: item?.name?.capitalize(), key: item.id }
+                    })
                 }
               />
             </div>

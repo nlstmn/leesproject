@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { NavLink } from "react-router-dom"
+import { NavLink, useLocation } from "react-router-dom"
 import { DatePicker, Space, Button } from "antd"
 import moment from "moment"
 import { DeleteOutlined } from "@ant-design/icons"
@@ -59,7 +59,14 @@ const TopFilter = ({
   isNewSurvey,
 }) => {
   const dispatch = useDispatch()
+  const location = useLocation()
   const isNewOrEditClient = useSelector((store) => store.saveEditOrCreateClient)
+  const totalSurveyData = useSelector(
+    (store) => store.getSurveysMetrics.payload.totalSurveysCount
+  )
+  const filteredSurveys = useSelector(
+    (store) => store.surveysManagement.totalSurveysCount
+  )
 
   // Refresh Animation
   const [isRefreshing, setRefreshing] = useState(false)
@@ -443,8 +450,6 @@ const TopFilter = ({
                     arr={arr}
                     key={item.options[i]}
                     setSurveyType={setSurveyType}
-                    surveyRef={surveyRef}
-                    rightAreaCount={10}
                   />
                 ))}
               </div>
@@ -607,8 +612,10 @@ const TopFilter = ({
             </>
           )}
           <span className="text-table-info total-c_span-ab">
-            Total: {totalClientsCount} clients - {clientsCountWithParameter}{" "}
-            filtered
+            {location.pathname.match(/\/clients-management$/g) &&
+              `Total: ${totalClientsCount} clients - ${clientsCountWithParameter} filtered`}
+            {location.pathname.match(/\/surveys-management$/g) &&
+              `Total: ${totalSurveyData} surveys - ${filteredSurveys} filtered`}
           </span>
           {/* This code provides clearing the alphabetic filter */}
           {isClientPage && (

@@ -28,6 +28,28 @@ const CustomSelect = ({
       setSelectChartType(index)
     }
   }
+  const getSurveyCount = (index, itemData) => {
+    const surveyCounts = itemData?.payload?.surveyCountsByStatuses
+
+    if (!surveyCounts) return 0
+
+    switch (index) {
+      case 0:
+        return surveyCounts?.live || 0
+      case 1:
+        return surveyCounts?.closed || 0
+      case 2:
+        return surveyCounts?.inBuild || 0
+      case 3:
+        return surveyCounts?.endingToday || 0
+      case 4:
+        return surveyCounts?.endingTomorrow || 0
+      case 5:
+        return surveyCounts?.demo || 0
+      default:
+        return 0
+    }
+  }
 
   const handleKeyDown = (index) => (e) => {
     switch (e.key) {
@@ -141,22 +163,9 @@ const CustomSelect = ({
                 {option}
                 &nbsp;
                 {location.pathname.match(/\/surveys-management$/g) &&
-                  index.payload !== null && (
+                  itemData.payload !== undefined && (
                     <span className="survey_count_badge">
-                      {index === 0
-                        ? itemData.payload.surveyCountsByStatuses[2].live
-                        : index === 1
-                        ? itemData.payload.surveyCountsByStatuses[3].closed
-                        : index === 2
-                        ? itemData.payload.surveyCountsByStatuses[1]["in build"]
-                        : index === 3
-                        ? itemData.payload.surveyCountsByStatuses[4].endingToday
-                        : index === 4
-                        ? itemData.payload.surveyCountsByStatuses[5]
-                            .endingTomorrow
-                        : index === 5
-                        ? itemData.payload.surveyCountsByStatuses[0].demo
-                        : index === 6 && 0}
+                      {getSurveyCount(index, itemData)}
                     </span>
                   )}
               </li>

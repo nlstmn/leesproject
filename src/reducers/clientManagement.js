@@ -1,4 +1,9 @@
-const rowDataInit = { name: null, client_id: null, client_ref_no: null }
+const rowDataInit = {
+  name: null,
+  client_id: null,
+  client_ref_no: null,
+  invite_code: null,
+}
 
 export const saveClientIdForSurveys = (state = { data: 0 }, action) => {
   switch (action.type) {

@@ -1,45 +1,28 @@
 import { Button, Drawer, Tree, Space } from "antd"
-import React, { useState } from "react"
-import { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { surveySetupFormData } from "../../../../../../../actions/adminActions"
 import { dbToTree } from "../../../../../../../util/functions"
 import { LightModeTreeColumn } from "../../../../../../common/commonComponents/formItems"
-const DrawerDepartmentSurvey = ({
-  isDepartmentSurveyDrawer,
-  setDepartmentSurveyDrawer,
+
+const DrawerLocationGroup = ({
+  isLocationGroupDrawer,
+  setLocationGroupDrawer,
   title,
 }) => {
   const dispatch = useDispatch()
-  const formDataSelectedDepartments = useSelector(
-    (store) => store.getOtherSurveySetupData?.data?.selectedDepartments
+  const drawerData = useSelector(
+    (store) => store.setSurveySetupDrawerData?.data
   )
-  const formDataAllDepartments = useSelector(
-    (store) => store.getOtherSurveySetupData?.data?.departments
-  )
-  const [selections, setSelections] = useState(formDataSelectedDepartments)
+  const formData = useSelector((store) => store.setSurveySetupFormData?.data)
+  const [selections, setSelections] = useState([])
 
   useEffect(() => {
-    setSelections(
-      formDataSelectedDepartments
-        ?.sort((a, b) => a.position - b.position)
-        ?.map((i) => i.id)
-    )
-  }, [formDataSelectedDepartments])
-
-  useEffect(() => {
-    dispatch(
-      surveySetupFormData({
-        data: formDataAllDepartments
-          ?.filter((i) => selections?.includes(i.id))
-          ?.sort((a, b) => a.position - b.position)
-          ?.map((i, index) => {
-            return { ...i, position: index }
-          }),
-        requestType: "departments",
-        successMessage: "Departments updated successfully",
-      })
-    )
+    surveySetupFormData({
+      data: formData?.data,
+      requestType: "locations",
+      successMessage: "Locations added successfully",
+    })
   }, [selections])
 
   return (
@@ -48,16 +31,16 @@ const DrawerDepartmentSurvey = ({
         className="filter_drawer small maxt right_filter"
         title=""
         placement={"right"}
-        onClose={() => setDepartmentSurveyDrawer(false)}
-        visible={isDepartmentSurveyDrawer}
+        onClose={() => setLocationGroupDrawer(false)}
+        visible={isLocationGroupDrawer}
         extra={
           <Space>
-            <Button onClick={() => setDepartmentSurveyDrawer(false)}>
+            <Button onClick={() => setLocationGroupDrawer(false)}>
               Cancel
             </Button>
             <Button
               type="primary"
-              onClick={() => setDepartmentSurveyDrawer(false)}
+              onClick={() => setLocationGroupDrawer(false)}
             >
               OK
             </Button>
@@ -66,7 +49,7 @@ const DrawerDepartmentSurvey = ({
       >
         <div className="n_drawer_body">
           <button
-            onClick={() => setDepartmentSurveyDrawer(false)}
+            onClick={() => setLocationGroupDrawer(false)}
             className="drawer__close"
           >
             <span className="cxv-close-l-icn"></span>
@@ -75,7 +58,7 @@ const DrawerDepartmentSurvey = ({
           <h3 className="mb-4">{title}</h3>
           <div className="row">
             <div className="col-lg-12">
-              <h5 className="d_sub_title">Selected departments</h5>
+              <h5 className="d_sub_title">Selected locations</h5>
             </div>
             <div className="col-lg-12">
               <div className="n__form_divider">
@@ -84,12 +67,26 @@ const DrawerDepartmentSurvey = ({
             </div>
 
             <div className="col-lg-12">
+              <div className="n_input_control has_icon in_drawer_small">
+                <span className="cxv-search-l-icn icn"></span>
+                <input
+                  placeholder="Search..."
+                  type="text"
+                  className="n_input"
+                  id="find-box"
+                ></input>
+              </div>
+            </div>
+
+            <div className="col-lg-12">
               <LightModeTreeColumn
-                type="departments"
-                description="Selected Departments"
+                type="locations"
+                description="Selected Locations"
                 setSelected={setSelections}
                 checkedKeys={selections}
-                treeData={dbToTree(formDataAllDepartments)}
+                treeData={dbToTree(
+                  formData?.allLocations?.filter((i) => !i.is_location_group)
+                )}
               />
             </div>
           </div>
@@ -97,13 +94,13 @@ const DrawerDepartmentSurvey = ({
 
         <div className="bottom_side">
           <button
-            onClick={() => setDepartmentSurveyDrawer(false)}
+            onClick={() => setLocationGroupDrawer(false)}
             className="btn-dash outline float-left tt"
           >
             Cancel
           </button>
           <button
-            onClick={() => setDepartmentSurveyDrawer(false)}
+            onClick={() => setLocationGroupDrawer(false)}
             className="btn-dash dark float-right tt"
           >
             Apply
@@ -114,4 +111,4 @@ const DrawerDepartmentSurvey = ({
   )
 }
 
-export default DrawerDepartmentSurvey
+export default DrawerLocationGroup

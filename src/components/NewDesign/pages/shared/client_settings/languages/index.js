@@ -1,12 +1,17 @@
 import React, { useEffect } from "react"
 import { Table } from "antd"
 import { useDispatch, useSelector } from "react-redux"
-import { getSurveyLanguagesAction } from "../../../../../../actions/adminActions"
+import {
+  getOtherSurveySetupAction,
+  getSurveyLanguagesAction,
+  surveySetupDrawerData,
+  surveySetupFormData,
+} from "../../../../../../actions/adminActions"
 import TranslationsModal from "./modal_translations"
 import { useState } from "react"
+import ImportExport from "../../../../../common/ImportExport"
 
 const LanguageSettings = ({
-  languagesSubMenu,
   isMenuSub,
   setMenuSub,
   isLanguageDrawer,
@@ -18,211 +23,85 @@ const LanguageSettings = ({
   const dispatch = useDispatch()
   const languagesData = useSelector((store) => store.getSurveysLanguages)
   /* TODO: clientId has to be dynamic */
-  const clientId = useSelector((store) => store.saveClientIdForSurveys)
+  const clientId = useSelector((store) => store.saveClientIdForSurveys.data)
   const surveyId = useSelector((store) => store.saveSurveyId.data)
+  const selectedLanguages = useSelector(
+    (store) => store.getOtherSurveySetupData?.data?.surveyLanguages
+  )
+  const translations = useSelector(
+    (store) => store.getOtherSurveySetupData?.data?.translations
+  )
+  const allLanguages = useSelector(
+    (store) => store?.getOtherSurveySetupData?.data?.languages
+  )
   const [translationsModal, setTranslationsModal] = useState(false)
+  const [tab, setTab] = useState("locations")
+  const [selectedTranslation, setSelectedTranslation] = useState([])
 
   useEffect(() => {
     dispatch(getSurveyLanguagesAction(clientId, surveyId))
+    dispatch(
+      getOtherSurveySetupAction({
+        clientId: clientId,
+        tab: "languages",
+        surveyId: surveyId,
+      })
+    )
   }, [])
+
+  useEffect(() => {
+    dispatch(
+      surveySetupDrawerData({
+        selectedLanguages,
+        allLanguages,
+        selectedTranslation,
+      })
+    )
+  }, [allLanguages, selectedLanguages, selectedTranslation])
 
   const columns = [
     {
-      title: "Original",
-      dataIndex: "original",
-      key: "original",
-      width: "300px",
+      title: "id",
+      dataIndex: "id",
+      render: (text) => <a>{text}</a>,
     },
     {
       title: "English (UK)",
-      dataIndex: "englishUK",
-      key: "englishUK",
-      render: (item) => (
-        <div className="action_btns status">
-          {item ? (
-            <span className="cxv-status-complete-active-l-icn "></span>
-          ) : (
-            <span className="cxv-status-incomplete-l-icn "></span>
-          )}
-        </div>
-      ),
+      dataIndex: "label",
+      render: (text) => <a>{text}</a>,
     },
     {
-      title: "English (US)",
-      dataIndex: "englishUS",
-      key: "englishUS",
-      render: (item) => (
-        <div className="action_btns status">
-          {item ? (
-            <span className="cxv-status-complete-active-l-icn "></span>
-          ) : (
-            <span className="cxv-status-incomplete-l-icn "></span>
-          )}
-        </div>
+      title: "Translations",
+      dataIndex: "translations",
+      render: (text) => (
+        <ul className="table-__ul">
+          {text
+            ?.sort((a, b) => a.language_id - b.language_id)
+            .map((tem) => (
+              <li>{tem.language + ": " + tem.label}</li>
+            ))}
+        </ul>
       ),
     },
-    {
-      title: "Dutch",
-      dataIndex: "dutch",
-      key: "dutch",
-      render: (item) => (
-        <div className="action_btns status">
-          {item ? (
-            <span className="cxv-status-complete-active-l-icn "></span>
-          ) : (
-            <span className="cxv-status-incomplete-l-icn "></span>
-          )}
-        </div>
-      ),
-    },
-    {
-      title: "German",
-      dataIndex: "german",
-      key: "german",
-      render: (item) => (
-        <div className="action_btns status">
-          {item ? (
-            <span className="cxv-status-complete-active-l-icn "></span>
-          ) : (
-            <span className="cxv-status-incomplete-l-icn "></span>
-          )}
-        </div>
-      ),
-    },
-    {
-      title: "Spanish(Spain)",
-      dataIndex: "spanish",
-      key: "spanish",
-      render: (item) => (
-        <div className="action_btns status">
-          {item ? (
-            <span className="cxv-status-complete-active-l-icn "></span>
-          ) : (
-            <span className="cxv-status-incomplete-l-icn "></span>
-          )}
-        </div>
-      ),
-    },
-    {
-      title: "Turkish",
-      dataIndex: "turkish",
-      key: "turkish",
-      render: (item) => (
-        <div className="action_btns status">
-          {item ? (
-            <span className="cxv-status-complete-active-l-icn "></span>
-          ) : (
-            <span className="cxv-status-incomplete-l-icn "></span>
-          )}
-        </div>
-      ),
-    },
-    {
-      title: "French (Canada)",
-      dataIndex: "french",
-      key: "french",
-      render: (item) => (
-        <div className="action_btns status">
-          {item ? (
-            <span className="cxv-status-complete-active-l-icn "></span>
-          ) : (
-            <span className="cxv-status-incomplete-l-icn "></span>
-          )}
-        </div>
-      ),
-    },
-    // {
-    //   title: "Translations",
-    //   key: "translations",
-    //   width: "130px",
-    //   render: (_, record)=>{
-    //     // eslint-disable-next-line jsx-a11y/anchor-is-valid
-    //     return (<span style={{textAlign:"left"}}>Bulgarian: Test b, <a onClick={()=>{
-    //       setTranslationsModal(true);
-    //       console.log(translationsModal);
-    //     }}>+3 more</a>
-    //       </span>);
-    //   }
-    // },
     {
       title: "Action",
       key: "action",
-      width: "130px",
       fixed: "right",
-      render: (_, record) => {
-        return (
-          <div className="action_btns">
-            <div className="fixed__btn">
-              <button
-                onClick={() => setTranslationsDrawer(true)}
-                className="icon__btn"
-              >
-                <span className="cxv-settings-l-icn clients_table_drop"></span>
-              </button>
-
-              {/* <Switch size="small" defaultChecked /> */}
-            </div>
-          </div>
-        )
-      },
-    },
-  ]
-
-  const data = [
-    {
-      key: "AB001",
-      original: "Location Name…",
-      englishUK: true,
-      englishUS: true,
-      dutch: true,
-      german: true,
-      spanish: true,
-      turkish: true,
-      french: true,
-    },
-    {
-      key: "AB002",
-      original: "Location Name…",
-      englishUK: true,
-      englishUS: true,
-      dutch: true,
-      german: true,
-      spanish: true,
-      turkish: true,
-      french: false,
-    },
-    {
-      key: "AB003",
-      original: "Location Name…",
-      englishUK: true,
-      englishUS: true,
-      dutch: true,
-      german: true,
-      spanish: true,
-      turkish: false,
-      french: false,
-    },
-    {
-      key: "AB004",
-      original: "Location Name…",
-      englishUK: true,
-      englishUS: true,
-      dutch: true,
-      german: true,
-      spanish: false,
-      turkish: false,
-      french: false,
-    },
-    {
-      key: "AB005",
-      original: "Location Name…",
-      englishUK: true,
-      englishUS: true,
-      dutch: true,
-      german: false,
-      spanish: false,
-      turkish: false,
-      french: false,
+      width: 100,
+      render: (record) => (
+        <>
+          <button
+            onClick={() => {
+              setTranslationsDrawer(true)
+              setSelectedTranslation(record)
+            }}
+            className="icon__btn"
+            title="Edit/Create"
+          >
+            <span className="cxv-settings-l-icn clients_table_drop"></span>
+          </button>
+        </>
+      ),
     },
   ]
 
@@ -237,7 +116,14 @@ const LanguageSettings = ({
           <h3 className="">Languages & translations</h3>
           <div className="row">
             <div className="col-lg-12">
-              <h4 className="sub_title">Languages</h4>
+              <button
+                onClick={() => {
+                  setLanguageDrawer(true)
+                }}
+                className="n__btn dark icon"
+              >
+                Add / Edit Languages
+              </button>
             </div>
 
             {!isSurvey && (
@@ -261,27 +147,85 @@ const LanguageSettings = ({
           <h4 className="sub_title">Translations</h4>
         </div>
 
-        {languagesSubMenu}
+        <div className="col-lg-12 col-md-12 without-btn-table">
+          <div className="n_menu_horizontal sub bottom" role="tablist">
+            <a
+              href="#!"
+              className={` ${tab === "locations" && " active"}`}
+              onClick={() => setTab("locations")}
+            >
+              Locations
+            </a>
+            <a
+              href="#!"
+              className={` ${tab === "departments" && " active"}`}
+              onClick={() => setTab("departments")}
+            >
+              Departments
+            </a>
+            <a
+              className={` ${tab === "questions" && " active"}`}
+              onClick={() => setTab("questions")}
+              href="#!"
+            >
+              Questions
+            </a>
+            <a
+              className={` ${tab === "options" && " active"}`}
+              onClick={() => setTab("options")}
+              href="#!"
+            >
+              Options
+            </a>
+            <a
+              className={` ${tab === "customisations" && " active"}`}
+              onClick={() => setTab("customisations")}
+              href="#!"
+            >
+              Customisations
+            </a>
+            <a
+              className={` ${tab === "tailored" && " active"}`}
+              onClick={() => setTab("tailored")}
+              href="#!"
+            >
+              Tailored
+            </a>
+            <a
+              className={` ${tab === "departmentLabels" && " active"}`}
+              onClick={() => setTab("departmentLabels")}
+              href="#!"
+            >
+              Department labels
+            </a>
+
+            <ImportExport
+            //TODO: will implement later
+            />
+
+            <a className={` `}>
+              <input
+                type="text"
+                onChange={(e) => {
+                  //setQuery(e.target.value)
+                }}
+                // value={query}
+                className="form-control"
+                placeholder="Search"
+              />
+            </a>
+
+            <ImportExport
+            //TODO: will implement later
+            />
+          </div>
+        </div>
 
         <div className="col-lg-12">
           <div className="n_table center_labels first_not_center respo">
             <Table
               columns={columns}
-              dataSource={data}
-              expandable={{
-                expandedRowRender: (record) => (
-                  <Table
-                    columns={columns}
-                    style={{
-                      margin: "32px 32px 32px 0px",
-                      border: "none !important",
-                    }}
-                    dataSource={data}
-                    pagination={false}
-                  />
-                ),
-                rowExpandable: (record) => record.name !== "Not Expandable",
-              }}
+              dataSource={translations && translations[tab]}
               pagination={false}
             />
           </div>

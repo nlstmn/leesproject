@@ -34,7 +34,6 @@ export default function SurveySpecificDashboard() {
     axios
       .post(`/metrics`, data)
       .then((res) => {
-        console.log("hi", res.data)
         setData(res.data)
         setCalcs(res.data.calc)
         setBuffer(res.data.calc)

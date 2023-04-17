@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import {
   getOtherSurveySetupAction,
   getSurveySetupAction,
+  surveySetupFormData,
 } from "../../../../../../../actions/adminActions"
 const CustomisationsSurveySettings = () => {
   const dispatch = useDispatch()
@@ -11,6 +12,8 @@ const CustomisationsSurveySettings = () => {
   )
   const surveyId = useSelector((store) => store.saveSurveyId.data)
   const clientId = useSelector((store) => store.saveClientIdForSurveys.data)
+  const [selectedPageId, setSelectedPageId] = useState()
+  const [formData, setFormData] = useState([])
 
   const getData = () => {
     dispatch(
@@ -21,6 +24,41 @@ const CustomisationsSurveySettings = () => {
       })
     )
   }
+
+  const change = (type, value) => {
+    setFormData([
+      ...formData.filter((i) => i.type !== type),
+      {
+        surveyId: surveyId,
+        language_id: 12,
+        label: value,
+        type: type,
+      },
+    ])
+  }
+
+  useEffect(() => {
+    if (dataSelector?.translations) {
+      setFormData(dataSelector.translations)
+    }
+  }, [dataSelector.translations])
+
+  useEffect(() => {
+    dispatch(
+      surveySetupFormData({
+        data: formData.map((i) => {
+          return {
+            surveyId: surveyId,
+            language_id: 12,
+            value: i.label,
+            name: i.type,
+          }
+        }),
+        requestType: "customisations",
+        successMessage: "Customisations updated successfully",
+      })
+    )
+  }, [formData])
 
   useEffect(() => {
     getData()
@@ -89,67 +127,26 @@ const CustomisationsSurveySettings = () => {
           </span>
 
           <div className="row">
-            <div className="col-lg-9 mt-4">
-              <div className="n__form_control">
-                <label className="n__form_label">
-                  <span>Intro text</span>
-                  <textarea
-                    type="text"
-                    name="name"
-                    value={
-                      dataSelector?.translations?.filter(
-                        (i) => i.type == "intro_text"
-                      )[0]?.label
-                    }
-                    className="n__form_input"
-                    placeholder="this is intro text..."
-                  />
-                </label>
-              </div>
-              <div className="n__form_control">
-                <label className="n__form_label">
-                  <span>Closing text</span>
-                  <textarea
-                    type="text"
-                    name="name"
-                    value={
-                      dataSelector?.translations?.filter(
-                        (i) => i.type == "close"
-                      )[0]?.label
-                    }
-                    className="n__form_input"
-                    placeholder="this is closing text..."
-                  />
-                </label>
-              </div>
-              <div className="n__form_control">
-                <label className="n__form_label">
-                  <span>Welcome popup</span>
-                  <textarea
-                    type="text"
-                    value={
-                      dataSelector?.translations?.filter(
-                        (i) => i.type == "welcome_popup"
-                      )[0]?.label
-                    }
-                    name="name"
-                    className="n__form_input"
-                    placeholder="this is welcome popup..."
-                  />
-                </label>
-              </div>{" "}
-            </div>
             <div className="col-lg-3">
               <div className="n__form_control">
                 <label className="n__form_label">
                   <span>Pages</span>
                   <div className="n__form_select">
-                    <select name="page" id="page">
+                    <select
+                      name="page"
+                      id="page"
+                      onChange={(e) => {
+                        setSelectedPageId(e.target.value)
+                      }}
+                    >
                       <option>Select Page</option>
                       {dataSelector?.pages?.map((item) => (
                         <option value={item.id} key={item.id}>
                           {item.name?.capitalize() + " - "}
-                          {item?.heading == null ? "No heading" : item?.heading}
+                          {item?.headings?.filter((i) => i)[0] &&
+                            item?.headings?.filter((i) => i)[0]?.capitalize() +
+                              " - "}
+                          {item?.question_label[0]?.capitalize()}
                         </option>
                       ))}
                     </select>
@@ -161,6 +158,17 @@ const CustomisationsSurveySettings = () => {
                           type="text"
                           style={{ height: "200px" }}
                           name="name"
+                          onChange={(e) => {
+                            change(
+                              `page_${selectedPageId}_popup`,
+                              e.target.value
+                            )
+                          }}
+                          value={
+                            formData?.filter(
+                              (i) => i.type == `page_${selectedPageId}_popup`
+                            )[0]?.label || ""
+                          }
                           className="n__form_input"
                           placeholder="This is page popup..."
                         />
@@ -169,6 +177,56 @@ const CustomisationsSurveySettings = () => {
                   </div>
                 </label>
               </div>
+            </div>
+            <div className="col-lg-9 mt-4">
+              <div className="n__form_control">
+                <label className="n__form_label">
+                  <span>Intro text</span>
+                  <textarea
+                    type="text"
+                    name="name"
+                    onChange={(e) => {
+                      change("intro", e.target.value)
+                    }}
+                    value={formData?.filter((i) => i.type == "intro")[0]?.label}
+                    className="n__form_input"
+                    placeholder="this is intro text..."
+                  />
+                </label>
+              </div>
+              <div className="n__form_control">
+                <label className="n__form_label">
+                  <span>Closing text</span>
+                  <textarea
+                    type="text"
+                    name="name"
+                    onChange={(e) => {
+                      change("close", e.target.value)
+                    }}
+                    value={formData?.filter((i) => i.type == "close")[0]?.label}
+                    className="n__form_input"
+                    placeholder="this is closing text..."
+                  />
+                </label>
+              </div>
+              <div className="n__form_control">
+                <label className="n__form_label">
+                  <span>Welcome popup</span>
+                  <textarea
+                    type="text"
+                    onChange={(e) => {
+                      change("welcome_popup", e.target.value)
+                    }}
+                    value={
+                      formData?.filter((i) => i.type == "welcome_popup")[0]
+                        ?.label
+                    }
+                    name="name"
+                    className="n__form_input"
+                    placeholder="this is welcome popup..."
+                  />
+                </label>
+              </div>{" "}
             </div>
           </div>
         </div>

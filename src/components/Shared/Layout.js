@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react"
 import { Link, useHistory, Route, Switch, Redirect } from "react-router-dom"
-import { connect } from "react-redux"
+import { connect, useDispatch } from "react-redux"
 import Menu from "./Menu"
 import Header from "./Header"
 import axios from "axios"
@@ -20,12 +20,13 @@ import {
   setFullScreen,
 } from "../../actions/settingsAction"
 import { useFullScreenHandle } from "react-full-screen"
-import { fetchClientSuccess } from "../../actions/client"
+import { fetchClientSuccess, fetchClientFailure } from "../../actions/client"
+import { notification } from "antd"
 
 function Layout(props) {
   const { role, isLoading, user } = useContext(AuthContext)
   const [responderMode, setresponderMode] = useState("OFF")
-
+  const dispatch = useDispatch()
   const openResponderModal = () => {
     localStorage.setItem("setresponderMode", "ON")
     setresponderMode(localStorage.getItem("setresponderMode"))
@@ -106,19 +107,12 @@ function Layout(props) {
       props.setLoginBackground(false)
       props.history.push("/login")
     } else {
-      getClientData()
     }
   }, [isLoading, user])
-  const getClientData = () => {
-    axios.get("/client").then((res) => {
-      props.fetchClientSuccess(res.data.result)
-    })
-  }
 
   const [locationKeys, setLocationKeys] = useState([])
   const history = useHistory()
 
-  // KULLANICI RESPONDER MOD AÇIKKEN İLERİ-GERİ-YENİLE DERSE ÖZELLİKLERİ KORU
   // CONTROL FOR BACK OR FORWARD CLICK ON BROWSER
   useEffect(() => {
     return history.listen((location) => {
@@ -324,5 +318,6 @@ const mapDispatchToProps = (dispatch) => ({
   setFullScreen: (e) => dispatch(setFullScreen(e)),
   setLoginBackground: (e) => dispatch(setLoginBackground(e)),
   fetchClientSuccess: (e) => dispatch(fetchClientSuccess(e)),
+  fetchClientFailure: (e) => dispatch(fetchClientFailure(e)),
 })
 export default connect(mapStateToProps, mapDispatchToProps)(Layout)

@@ -1,7 +1,13 @@
 import { Button, Drawer, Space } from "antd"
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { getAllLanguages } from "../../../../../../actions/adminActions"
+import {
+  getAllLanguages,
+  surveySetupDrawerData,
+  surveySetupFormData,
+} from "../../../../../../actions/adminActions"
+import { dbToTree } from "../../../../../../util/functions"
+import { LightModeTreeColumn } from "../../../../../common/commonComponents/formItems"
 
 const DrawerLanguage = ({
   isLanguageDrawer,
@@ -10,12 +16,35 @@ const DrawerLanguage = ({
   isSurvey,
 }) => {
   const dispatch = useDispatch()
+  const drawerData = useSelector(
+    (store) => store.setSurveySetupDrawerData?.data
+  )
+  const allLanguages = useSelector(
+    (store) => store.setSurveySetupDrawerData?.data?.allLanguages
+  )
+  const selectedLanguages = useSelector(
+    (store) => store.setSurveySetupDrawerData?.data?.selectedLanguages
+  )
+  const formData = useSelector((store) => store.setSurveySetupFormData)
+  const [selections, setSelections] = useState([])
 
   useEffect(() => {
-    // TODO: Hardcoded area will change after completed other areas...
-    dispatch(getAllLanguages(4159))
-  }, [dispatch])
+    setSelections(selectedLanguages?.map((i) => i.id))
+  }, [allLanguages, selectedLanguages])
 
+  useEffect(() => {
+    selections?.length > 0 &&
+      JSON.stringify(selections.sort()) !==
+        JSON.stringify(selectedLanguages?.map((i) => i.id).sort()) &&
+      dispatch(
+        surveySetupDrawerData({
+          ...drawerData,
+          selectedLanguages: allLanguages?.filter((i) =>
+            selections?.includes(i.id)
+          ),
+        })
+      )
+  }, [selections, drawerData])
   return (
     <>
       <Drawer
@@ -44,46 +73,17 @@ const DrawerLanguage = ({
           <h3 className="mb-4">{title}</h3>
 
           <div className="row">
-            {!isSurvey && (
-              <>
-                <div className="col-lg-12">
-                  <div className="n__form_control">
-                    <label className="n__form_label">
-                      <span>Default language</span>
-                      <div className="n__form_select">
-                        <select name="industry" id="industry">
-                          <option value="Option 1...">English (UK)</option>
-                          <option value="Option 2...">Option 2...</option>
-                          <option value="Option 3...">Option 3...</option>
-                        </select>
-                        <div className="icn cxv-expand-more-l-icn"></div>
-                      </div>
-                    </label>
-                  </div>
-                </div>
-                <div className="col-lg-12">
-                  <div className="n__form_divider">
-                    <div className="n__divider"></div>
-                  </div>
-                </div>
-              </>
-            )}
-
             <div className="col-lg-12">
               <h5 className="d_sub_title">All languages</h5>
             </div>
-            {/* {allLanguages.map((item,idx)=>{
-                console.log(`Item ${idx}: ${item}`);
-                return (<div className="col-lg-6" key={item.id}>
-                <div className="n__form_control">
-                  <label className="n__form_label dashboard_check">
-                    <input type="checkbox" name={item.label} value={item.enabled} defaultChecked={item.enabled} />
-                    <span className="label-_text">{item.label}</span>
-                    <span className="checkmark"></span>
-                  </label>
-                </div>
-              </div>)
-              })} */}
+
+            <LightModeTreeColumn
+              type="languages"
+              description="Selected Departments"
+              setSelected={setSelections}
+              checkedKeys={selections}
+              treeData={dbToTree(allLanguages)}
+            />
           </div>
         </div>
 

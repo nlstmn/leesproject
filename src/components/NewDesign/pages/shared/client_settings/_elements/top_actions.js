@@ -1,6 +1,8 @@
 import React, { useState } from "react"
 import validator from "validator"
 import { useHistory } from "react-router"
+import { useSelector } from "react-redux"
+import { notification } from "antd"
 
 const TopClientActions = ({
   isMenu,
@@ -10,11 +12,8 @@ const TopClientActions = ({
   searchFoundCount,
   selectPrevMatch,
   selectNextMatch,
-  istreeData,
-  settreeData,
   isMenuSub,
   setLocationDrawer,
-  setLanguageDrawer,
   setUserDrawer,
   setNotificationDrawer,
   setImportExportDrawer,
@@ -24,6 +23,7 @@ const TopClientActions = ({
   treeStruct,
   setTreeStruct,
 }) => {
+
   const [errorMessage, setErrorMessage] = useState("")
   const validate = (value) => {
     if (validator.isURL(value) || value.length === "0") {
@@ -34,6 +34,7 @@ const TopClientActions = ({
   }
 
   const history = useHistory()
+  const clientData = useSelector((store) => store.saveRowData.data)
 
   return (
     <>
@@ -62,10 +63,24 @@ const TopClientActions = ({
               <div className="h_divider qq"></div>
 
               <div className="left__item">
-                <button className="btn-dash drop has-icn">
-                  Get invite URL
-                  <span className="iconx-globe icn xl"></span>
-                </button>
+                {clientData.invite_code !== null && (
+                  <button
+                    className="btn-dash drop has-icn"
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        window.location.origin +
+                        "/signup?invite_code=" +
+                        clientData.invite_code
+                      )
+                      notification.success({
+                        message: "Invite link copied to clipboard!",
+                      })
+                    }}
+                  >
+                    Get invite URL
+                    <span className="iconx-globe icn xl"></span>
+                  </button>
+                )}
               </div>
             </>
           )}
@@ -229,7 +244,7 @@ const TopClientActions = ({
           )}
           {isMenu === "Locations" && (
             <button
-              onClick={() => {}}
+              onClick={() => { }}
               href="#!"
               className="btn-dash drop has-icn"
             >

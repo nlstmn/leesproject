@@ -1,7 +1,6 @@
 import { DatePicker } from "antd"
 import React, { useEffect, useLayoutEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useHistory } from "react-router-dom"
 import { toast, ToastContainer } from "react-toastify"
 import BreadcrumbDashboard from "../../../elements/breadcrumb_dashboard"
 import LoaderPage from "../../../elements/loader_page"
@@ -28,16 +27,15 @@ import TopClientActions from "./_elements/top_actions"
 import {
   saveClientsMainSettingsAction,
   updateClientsMainSettingsAction,
+  saveDepartmentsAction
 } from "../../../../../actions/adminActions"
 import {
-  createNewClient,
   editClient,
   saveClientIdForSurveys,
   saveRowData,
 } from "../../../../../actions/clientManagement"
 import "react-toastify/dist/ReactToastify.css"
 import SurveysSettings from "./surveys/index"
-
 import {
   saveMenuIndex,
   saveMenuIndexSub,
@@ -74,7 +72,6 @@ const ClientSettings = () => {
   useLayoutEffect(() => {
     document.body.classList.add("temp__class")
   }, [])
-  const history = useHistory()
 
   const [isMenu, setMenu] = useState("Main")
   const [isMenuSub, setMenuSub] = useState(null)
@@ -207,6 +204,20 @@ const ClientSettings = () => {
     } else if (isMenuStoreVal === "Departments") {
       // When the case is saving department values apply these functions
       window.alert("Department changes have been saved successfully")
+      /* TODO: CHANGE HARDCODED DATA */
+      dispatch(
+        saveDepartmentsAction(
+          {
+            parentId: "5421",
+            language: "en-GB",
+            data: [{ "name": "elepapps12223" }]
+          },
+          clientId
+        )
+      )
+      setSavedMainSettings(true)
+      // For clearing this topic: This is edit client because when we are creating new client, we're changing to edit mode...
+      dispatch(editClient())
     } else if (isMenuStoreVal === "Locations") {
       // When the case is saving department values apply these functions
       window.alert("Location changes have been saved successfully")
@@ -317,9 +328,9 @@ const ClientSettings = () => {
         setLocationDrawer={setLocationDrawer}
         locationRowData={locationRowData}
         setLocationRowData={setLocationRowData}
-        title={isLocationEdit === true ? "Edit location" : "New location"}
         isLocationEdit={isLocationEdit}
         setLocationEdit={setLocationEdit}
+        title={isLocationEdit === true ? "Edit location" : "New location"}
       />
 
       <LocationGroupDrawer
@@ -391,9 +402,8 @@ const ClientSettings = () => {
                         dispatch(saveMenuIndex("Main"))
                       }}
                       href="#!"
-                      className={`${
-                        isMenuStoreVal === "Main" ? " active" : ""
-                      } `}
+                      className={`${isMenuStoreVal === "Main" ? " active" : ""
+                        } `}
                     >
                       Main
                     </a>
@@ -405,9 +415,8 @@ const ClientSettings = () => {
                             dispatch(saveMenuIndexSub("Dropdown"))
                           }}
                           href="#!"
-                          className={`${
-                            isMenuStoreVal === "Departments" ? " active" : ""
-                          } `}
+                          className={`${isMenuStoreVal === "Departments" ? " active" : ""
+                            } `}
                         >
                           Departments
                         </a>
@@ -417,9 +426,8 @@ const ClientSettings = () => {
                             dispatch(saveMenuIndexSub("LocationsSub"))
                           }}
                           href="#!"
-                          className={`${
-                            isMenuStoreVal === "Locations" ? " active" : ""
-                          } `}
+                          className={`${isMenuStoreVal === "Locations" ? " active" : ""
+                            } `}
                         >
                           Locations
                         </a>
@@ -429,9 +437,8 @@ const ClientSettings = () => {
                             dispatch(saveMenuIndexSub("SurveysSub"))
                           }}
                           href="#!"
-                          className={`${
-                            isMenuStoreVal === "Surveys" ? " active" : ""
-                          } `}
+                          className={`${isMenuStoreVal === "Surveys" ? " active" : ""
+                            } `}
                         >
                           Surveys
                         </a>
@@ -441,9 +448,8 @@ const ClientSettings = () => {
                             dispatch(saveMenuIndexSub("ModulesSub"))
                           }}
                           href="#!"
-                          className={`${
-                            isMenuStoreVal === "Modules" ? " active" : ""
-                          } `}
+                          className={`${isMenuStoreVal === "Modules" ? " active" : ""
+                            } `}
                         >
                           Modules
                         </a>
@@ -452,11 +458,10 @@ const ClientSettings = () => {
                             dispatch(saveMenuIndex("User management"))
                           }}
                           href="#!"
-                          className={`${
-                            isMenuStoreVal === "User management"
-                              ? " active"
-                              : ""
-                          } `}
+                          className={`${isMenuStoreVal === "User management"
+                            ? " active"
+                            : ""
+                            } `}
                         >
                           User management
                         </a>
@@ -466,9 +471,8 @@ const ClientSettings = () => {
                             dispatch(saveMenuIndexSub("Domains"))
                           }}
                           href="#!"
-                          className={`${
-                            isMenuStoreVal === "Verifications" ? " active" : ""
-                          } `}
+                          className={`${isMenuStoreVal === "Verifications" ? " active" : ""
+                            } `}
                         >
                           Domain verification
                         </a>
@@ -478,11 +482,10 @@ const ClientSettings = () => {
                             dispatch(saveMenuIndexSub("sso"))
                           }}
                           href="#!"
-                          className={`${
-                            isMenuStoreVal === "Identity provider"
-                              ? " active"
-                              : ""
-                          } `}
+                          className={`${isMenuStoreVal === "Identity provider"
+                            ? " active"
+                            : ""
+                            } `}
                         >
                           Identity provider
                         </a>
@@ -508,18 +511,16 @@ const ClientSettings = () => {
                     dispatch(saveMenuIndexSub("Dropdown"))
                   }}
                   href="#!"
-                  className={`${
-                    isMenuSubStoreVal === "Dropdown" ? " active" : ""
-                  } `}
+                  className={`${isMenuSubStoreVal === "Dropdown" ? " active" : ""
+                    } `}
                 >
                   Dropdown department list
                 </a>
                 <a
                   onClick={() => dispatch(saveMenuIndexSub("Cascading"))}
                   href="#!"
-                  className={`${
-                    isMenuSubStoreVal === "Cascading" ? " active" : ""
-                  } `}
+                  className={`${isMenuSubStoreVal === "Cascading" ? " active" : ""
+                    } `}
                 >
                   Cascading department list
                 </a>
@@ -534,9 +535,8 @@ const ClientSettings = () => {
                     dispatch(saveMenuIndexSub("LocationsSub"))
                   }}
                   href="#!"
-                  className={`${
-                    isMenuSubStoreVal === "LocationsSub" ? " active" : ""
-                  } `}
+                  className={`${isMenuSubStoreVal === "LocationsSub" ? " active" : ""
+                    } `}
                 >
                   Locations
                 </a>
@@ -545,9 +545,8 @@ const ClientSettings = () => {
                     dispatch(saveMenuIndexSub("LocationGroups"))
                   }}
                   href="#!"
-                  className={`${
-                    isMenuSubStoreVal === "LocationGroups" ? " active" : ""
-                  } `}
+                  className={`${isMenuSubStoreVal === "LocationGroups" ? " active" : ""
+                    } `}
                 >
                   Location groups
                 </a>
@@ -556,9 +555,8 @@ const ClientSettings = () => {
                     dispatch(saveMenuIndexSub("Floors"))
                   }}
                   href="#!"
-                  className={`${
-                    isMenuSubStoreVal === "Floors" ? " active" : ""
-                  } `}
+                  className={`${isMenuSubStoreVal === "Floors" ? " active" : ""
+                    } `}
                 >
                   Floors
                 </a>
@@ -574,18 +572,16 @@ const ClientSettings = () => {
                     dispatch(saveMenuIndexSub("Domains"))
                   }}
                   href="#!"
-                  className={`${
-                    isMenuSubStoreVal === "Domains" ? " active" : ""
-                  } `}
+                  className={`${isMenuSubStoreVal === "Domains" ? " active" : ""
+                    } `}
                 >
                   Domains
                 </a>
                 <a
                   onClick={() => dispatch(saveMenuIndexSub("Emails"))}
                   href="#!"
-                  className={`${
-                    isMenuSubStoreVal === "Emails" ? " active" : ""
-                  } `}
+                  className={`${isMenuSubStoreVal === "Emails" ? " active" : ""
+                    } `}
                 >
                   Emails
                 </a>
@@ -610,9 +606,8 @@ const ClientSettings = () => {
           )}
           {/* SUB MENU */}
           <div
-            className={`${
-              isMenuStoreVal === "Main" ? "col-lg-6" : "col-lg-12"
-            } `}
+            className={`${isMenuStoreVal === "Main" ? "col-lg-6" : "col-lg-12"
+              } `}
           >
             {isMenuStoreVal === "Main" && (
               <MainSettings

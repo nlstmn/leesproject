@@ -1,11 +1,15 @@
 import { Modal, DatePicker } from "antd"
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useLayoutEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import {
+  getCities,
+  getCountries,
+  getRegions,
   postNewLocation,
   updateLocation,
 } from "../../../../../../actions/adminActions"
+import { resetCities } from "../../../../../../actions/locations"
 
 const ModalLocation = ({
   isLocationDrawer,
@@ -16,14 +20,23 @@ const ModalLocation = ({
   setLocationEdit,
 }) => {
   const dispatch = useDispatch()
+  const regionsList = useSelector((store) => store.getRegions.data)
+  const countriesList = useSelector((store) => store.getCountries.data)
+  const citiesList = useSelector((store) => store.getCities.data)
   const selectedClientId = useSelector(
     (store) => store.saveClientIdForSurveys.data
   )
+  const menuIndex = useSelector((store) => store.saveMenuIndex.data)
   const [isMenu, setMenu] = useState("Locations")
+
+  const [locationsInitialData, setLocationsInitialData] = useState({})
 
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
+    setError,
     reset,
     formState: { errors },
   } = useForm({
@@ -49,29 +62,62 @@ const ModalLocation = ({
     },
   })
 
+  let watchRegionId = watch("regionId")
+  let watchCountryId = watch("countryId")
+  let watchCityId = watch("cityId")
+  let dateOfOrganization = watch("dateOrganisationMovedIn")
+
   useEffect(() => {
-    let backToDefaultVals = {
-      name: isLocationEdit ? locationRowData.label : "",
+    dispatch(getRegions(1))
+  }, [])
+
+  useEffect(() => {
+    reset((formValues) => ({
+      ...formValues,
+      name: locationRowData.label,
       language: "en-GB",
-      regionId: isLocationEdit ? locationRowData.region_id : null,
-      parentId: null,
-      countryId: null,
-      cityId: null,
-      postCode: null,
-      numberOfFloors: null,
+      parentId: locationRowData.parentId,
+      countryId: locationRowData.country_id,
+      cityId: locationRowData.city_id,
+      postCode: locationRowData.postCode,
+      numberOfFloors: locationRowData.numberOfFloors,
       targetPopulation: null,
-      occupancyStatus: null,
-      area: null,
-      occupancyMix: "",
-      buildingLocation: "",
+      occupancyStatus: locationRowData.occupancyStatus,
+      area: locationRowData.area,
+      occupancyMix: locationRowData.occupancyMix,
+      buildingLocation: locationRowData.buildingLocation,
+      regionId: locationRowData.region_id,
       lat: null,
       long: null,
       address: "",
-      dateOrganisationMovedIn: null,
+      dateOrganisationMovedIn: locationRowData.dateOrganisationMovedIn,
       buildingStyle: null,
-    }
-    reset({ ...backToDefaultVals })
-  }, [locationRowData, isLocationEdit])
+    }))
+    console.log("LOCATION ROW DATA", locationRowData)
+  }, [locationRowData])
+
+  // If region list is changed reset cities data, first user
+  // changes the country then, city area will be activated
+  useEffect(() => {
+    dispatch(resetCities())
+    setValue("cityId", null)
+  }, [watchRegionId])
+
+  // Fetch Countries Data When Is Not Null
+  useEffect(() => {
+    watchRegionId !== null &&
+      menuIndex === "Locations" &&
+      dispatch(getCountries(selectedClientId, watchRegionId))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchRegionId])
+
+  // Fetch Cities Data When Country Id Is Not Null
+  useEffect(() => {
+    watchCountryId !== null &&
+      menuIndex === "Locations" &&
+      dispatch(getCities(selectedClientId, watchCountryId))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchCountryId])
 
   return (
     <>
@@ -157,16 +203,29 @@ const ModalLocation = ({
                       <span>Region</span>
                       <div className="n__form_select">
                         <select
+                          className={`n__form_input ${
+                            errors.regionId?.type === "required" &&
+                            "border-danger"
+                          }`}
                           name="regionId"
                           id="regionId"
-                          {...register("regionId", { valueAsNumber: true })}
+                          {...register("regionId", {
+                            required: "true",
+                            valueAsNumber: true,
+                          })}
                         >
-                          <option value="Option 1...">Option 1...</option>
-                          <option value="Option 2...">Option 2...</option>
-                          <option value="Option 3...">Option 3...</option>
+                          {regionsList !== [] &&
+                            regionsList.map((item) => (
+                              <option value={item.id}>{item.name}</option>
+                            ))}
                         </select>
                         <div className="icn cxv-expand-more-l-icn"></div>
                       </div>
+                      {errors.regionId?.type === "required" && (
+                        <small className="text-danger">
+                          Region field is required
+                        </small>
+                      )}
                     </label>
                   </div>
                 </div>
@@ -176,16 +235,29 @@ const ModalLocation = ({
                       <span>Country</span>
                       <div className="n__form_select">
                         <select
+                          className={`n__form_input ${
+                            errors.countryId?.type === "required" &&
+                            "border-danger"
+                          }`}
                           name="countryId"
                           id="countryId"
-                          {...register("countryId", { valueAsNumber: true })}
+                          disabled={countriesList.length === 0}
+                          {...register("countryId", {
+                            required: "true",
+                            valueAsNumber: true,
+                          })}
                         >
-                          <option value="Option 1...">Option 1...</option>
-                          <option value="Option 2...">Option 2...</option>
-                          <option value="Option 3...">Option 3...</option>
+                          {countriesList.map((item) => (
+                            <option value={item.id}>{item.label}</option>
+                          ))}
                         </select>
                         <div className="icn cxv-expand-more-l-icn"></div>
                       </div>
+                      {errors.countryId?.type === "required" && (
+                        <small className="text-danger">
+                          Country field is required
+                        </small>
+                      )}
                     </label>
                   </div>
                 </div>
@@ -195,16 +267,34 @@ const ModalLocation = ({
                       <span>City</span>
                       <div className="n__form_select">
                         <select
+                          className={`n__form_input ${
+                            errors.cityId?.type === "required" &&
+                            "border-danger"
+                          }`}
                           name="cityId"
                           id="cityId"
-                          {...register("cityId")}
+                          {...register("cityId", {
+                            required: "true",
+                            valueAsNumber: true,
+                          })}
+                          disabled={citiesList.length === 0}
                         >
-                          <option value="Option 1...">Option 1...</option>
-                          <option value="Option 2...">Option 2...</option>
-                          <option value="Option 3...">Option 3...</option>
+                          {citiesList
+
+                            .map((item) => (
+                              <option value={item.id}>{item.label}</option>
+                            ))
+                            .sort((a, b) => {
+                              return a.label - b.label
+                            })}
                         </select>
                         <div className="icn cxv-expand-more-l-icn"></div>
                       </div>
+                      {errors.cityId?.type === "required" && (
+                        <small className="text-danger">
+                          City field is required
+                        </small>
+                      )}
                     </label>
                   </div>
                 </div>
@@ -262,16 +352,34 @@ const ModalLocation = ({
                       <span>Building location</span>
                       <div className="n__form_select">
                         <select
+                          className={`n__form_input ${
+                            errors.buildingLocation?.type === "required" &&
+                            "border-danger"
+                          }`}
                           name="buildingLocation"
                           id="buildingLocation"
-                          {...register("buildingLocation")}
+                          {...register("buildingLocation", {
+                            required: "true",
+                          })}
                         >
-                          <option value="Option 1...">Option 1...</option>
-                          <option value="Option 2...">Option 2...</option>
-                          <option value="Option 3...">Option 3...</option>
+                          <option value="" disabled hidden selected>
+                            Please select
+                          </option>
+                          <option value="Urban">Urban</option>
+                          <option value="Suburban">Suburban</option>
+                          <option value="Satellite business park">
+                            Satellite business park
+                          </option>
+                          <option value="Rural">Rural</option>
+                          <option value="Other">Other</option>
                         </select>
                         <div className="icn cxv-expand-more-l-icn"></div>
                       </div>
+                      {errors.buildingLocation?.type === "required" && (
+                        <small className="text-danger">
+                          Building location field is required
+                        </small>
+                      )}
                     </label>
                   </div>
                 </div>
@@ -281,16 +389,35 @@ const ModalLocation = ({
                       <span>Building style</span>
                       <div className="n__form_select">
                         <select
+                          className={`n__form_input ${
+                            errors.buildingStyle?.type === "required" &&
+                            "border-danger"
+                          }`}
                           name="buildingStyle"
                           id="buildingStyle"
-                          {...register("buildingStyle")}
+                          {...register("buildingStyle", { required: "true" })}
                         >
-                          <option value="Option 1...">Option 1...</option>
-                          <option value="Option 2...">Option 2...</option>
-                          <option value="Option 3...">Option 3...</option>
+                          <option value="" disabled hidden selected>
+                            Please select
+                          </option>
+                          {[
+                            "Heritage",
+                            "Pre 50s",
+                            "50s - 80s",
+                            "80s - 2000",
+                            "Post millenium",
+                            "Other",
+                          ].map((item) => {
+                            return <option value={item}>{item}</option>
+                          })}
                         </select>
                         <div className="icn cxv-expand-more-l-icn"></div>
                       </div>
+                      {errors.buildingStyle?.type === "required" && (
+                        <small className="text-danger">
+                          Building style field is required
+                        </small>
+                      )}
                     </label>
                   </div>
                 </div>
@@ -300,16 +427,31 @@ const ModalLocation = ({
                       <span>Occupancy status</span>
                       <div className="n__form_select">
                         <select
+                          className={`n__form_input ${
+                            errors.occupancyStatus?.type === "required" &&
+                            "border-danger"
+                          }`}
                           name="occupancyStatus"
                           id="occupancyStatus"
-                          {...register("occupancyStatus")}
+                          {...register("occupancyStatus", { required: "true" })}
                         >
-                          <option value="Option 1...">Option 1...</option>
-                          <option value="Option 2...">Option 2...</option>
-                          <option value="Option 3...">Option 3...</option>
+                          <option value="" disabled hidden selected>
+                            Please select
+                          </option>
+                          <option value="Owned">Owned</option>
+                          <option value="Leased" selected>
+                            Leased
+                          </option>
+                          <option value="Sublet">Sublet</option>
+                          <option value="Other">Other</option>
                         </select>
                         <div className="icn cxv-expand-more-l-icn"></div>
                       </div>
+                      {errors.occupancyStatus?.type === "required" && (
+                        <small className="text-danger">
+                          Occupancy status field is required
+                        </small>
+                      )}
                     </label>
                   </div>
                 </div>
@@ -319,16 +461,30 @@ const ModalLocation = ({
                       <span>Occupancy mix</span>
                       <div className="n__form_select">
                         <select
+                          className={`n__form_input ${
+                            errors.occupancyMix?.type === "required" &&
+                            "border-danger"
+                          }`}
                           name="occupancyMix"
                           id="occupancyMix"
-                          {...register("occupancyMix")}
+                          {...register("occupancyMix", { required: "true" })}
                         >
-                          <option value="Option 1...">Option 1...</option>
-                          <option value="Option 2...">Option 2...</option>
-                          <option value="Option 3...">Option 3...</option>
+                          <option value="" disabled hidden selected>
+                            Please select
+                          </option>
+                          <option value="Sole occupiers">Sole occupiers</option>
+                          <option value="Multiple occupants">
+                            Multiple occupants
+                          </option>
+                          <option value="Other">Other</option>
                         </select>
                         <div className="icn cxv-expand-more-l-icn"></div>
                       </div>
+                      {errors.occupancyMix?.type === "required" && (
+                        <small className="text-danger">
+                          Occupancy mix field is required
+                        </small>
+                      )}
                     </label>
                   </div>
                 </div>
@@ -363,6 +519,7 @@ const ModalLocation = ({
                       <span>Date of organisation moved in</span>
                       <div className="n_calendar_select">
                         <DatePicker
+                          name="dateOrganisationMovedIn"
                           className="w-100"
                           format={"DD / MM / YYYY"}
                           style={{ width: "100%" }}
@@ -371,6 +528,11 @@ const ModalLocation = ({
                           }}
                         />
                       </div>
+                      {errors.dateOrganisationMovedIn?.type === "required" && (
+                        <small className="text-danger">
+                          Date field is required
+                        </small>
+                      )}
                     </label>
                   </div>
                 </div>
@@ -378,7 +540,11 @@ const ModalLocation = ({
                   <button
                     type="button"
                     className="n__btn outline icon mr-2"
-                    onClick={() => setLocationDrawer(false)}
+                    onClick={() => {
+                      setLocationDrawer(false)
+
+                      reset()
+                    }}
                   >
                     Cancel
                   </button>
@@ -394,7 +560,6 @@ const ModalLocation = ({
                   <div className="n__form_control input_has_btn">
                     <label className="n__form_label">
                       <span>Add new floor</span>
-
                       <div className="group">
                         <input
                           type="text"

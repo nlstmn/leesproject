@@ -26,7 +26,6 @@ const SummarySettings = ({ setMenu, setMenuSub, isMenu, isMenuSub, goTop }) => {
 
   useEffect(() => {
     getData()
-    console.log(dataSelector)
   }, [])
 
   const columns = [

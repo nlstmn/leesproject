@@ -1,11 +1,16 @@
 import { Button, Drawer, DatePicker, Space } from "antd"
 import React, { useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
 
 const DrawerTailorLocationQuestions = ({
   isTailorLocationDrawer,
   setTailorLocationDrawer,
   title,
 }) => {
+  const dispatch = useDispatch()
+  const tailored = useSelector(
+    (store) => store.setSurveySetupDrawerData?.data?.tailored
+  )
   return (
     <>
       <Drawer
@@ -46,6 +51,7 @@ const DrawerTailorLocationQuestions = ({
                     type="text"
                     name="name"
                     className="n__form_input"
+                    value={tailored?.find((i) => i.level === 0)?.label}
                     defaultValue="What region are you primarily based in?"
                   />
                 </label>
@@ -64,6 +70,7 @@ const DrawerTailorLocationQuestions = ({
                     type="text"
                     name="name"
                     className="n__form_input"
+                    value={tailored?.find((i) => i.level === 2)?.label}
                     defaultValue="What floor do you primarily work on?"
                   />
                 </label>

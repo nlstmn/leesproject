@@ -6,18 +6,22 @@ import {
   sortableContainer,
   sortableElement,
   sortableHandle,
+  arrayMove,
 } from "react-sortable-hoc"
 import {
   getOtherSurveySetupAction,
   getSurveySetupAction,
+  surveySetupFormData,
 } from "../../../../../../../actions/adminActions"
 import DepartmentsTreeSurveys from "./departments_tree_survey"
 
-const DragHandle = sortableHandle(({ active }) => (
-  <span
-    className={`iconx-dehaze grab__table_item ${active && " actived"}`}
-  ></span>
-))
+const DragHandle = sortableHandle(({ active, i }) => {
+  return (
+    <span
+      className={`iconx-dehaze grab__table_item ${active && " actived"}`}
+    ></span>
+  )
+})
 
 const SortableItem = sortableElement((props) => <tr {...props} />)
 const SortableContainer = sortableContainer((props) => <tbody {...props} />)
@@ -30,8 +34,11 @@ const DepartmentSurveySettings = ({
   const dataSelector = useSelector(
     (store) => store.getOtherSurveySetupData?.data
   )
+  const formData = useSelector((store) => store.setSurveySetupFormData?.data)
   const surveyId = useSelector((store) => store?.saveSurveyId?.data)
   const clientId = useSelector((store) => store.saveClientIdForSurveys.data)
+  const [selectedItems, setSelectedItems] = useState([])
+
   const getData = () => {
     dispatch(
       getOtherSurveySetupAction({
@@ -46,32 +53,33 @@ const DepartmentSurveySettings = ({
     getData()
   }, [])
 
-  const [dataSource, setDataSource] = useState([])
-  const [selectedItems, setSelectedItems] = useState([])
+  const updateFormdata = (data) => {
+    dispatch(
+      surveySetupFormData({
+        ...formData,
+        data: data,
+      })
+    )
+  }
 
   const getColumns = () => {
     return [
       {
         title: "Sort",
-        dataIndex: "sort",
+        dataIndex: "position",
         width: 30,
         className: "drag-visible",
         render: (d, dd, i) => (
           <>
-            <DragHandle active={selectedItems.includes(i)} />
+            <DragHandle active={selectedItems.includes(i)} id={dd} />
           </>
         ),
       },
-      // {
-      //   title: '##',
-      //   dataIndex: 'key',
-      //   key: 'key',
-      //   width:"90px"
-      // },
+
       {
         title: "Selected departments",
-        dataIndex: "name",
-        key: "name",
+        dataIndex: "label",
+        key: "label",
         className: "drag-visible",
       },
 
@@ -85,7 +93,15 @@ const DepartmentSurveySettings = ({
           return (
             <div className="action_btns">
               <div className="fixed__btn">
-                <button className="icon__btn" title="Delete user">
+                <button
+                  className="icon__btn"
+                  title="Delete department"
+                  onClick={() => {
+                    let tempData = [...formData?.data]
+                    tempData = tempData.filter((d) => d.id !== record.id)
+                    updateFormdata(tempData)
+                  }}
+                >
                   <span className="cxv-delete-l-icn clients_table_drop"></span>
                 </button>
 
@@ -98,63 +114,44 @@ const DepartmentSurveySettings = ({
     ]
   }
 
-  const merge = (a, b, i = 0) => {
-    let aa = [...a]
-    return [...a.slice(0, i), ...b, ...aa.slice(i, aa.length)]
-  }
-
   const onSortEnd = ({ oldIndex, newIndex }) => {
-    let tempDataSource = dataSource
-
-    if (oldIndex !== newIndex) {
-      if (!selectedItems.length) {
-        let movingItem = tempDataSource[oldIndex]
-        tempDataSource.splice(oldIndex, 1)
-        tempDataSource = merge(tempDataSource, [movingItem], newIndex)
-      } else {
-        let filteredItems = []
-        selectedItems.forEach((d) => {
-          filteredItems.push(tempDataSource[d])
-        })
-        let newData = []
-        tempDataSource.forEach((d, i) => {
-          if (!selectedItems.includes(i)) {
-            newData.push(d)
-          }
-        })
-        tempDataSource = [...newData]
-        tempDataSource = merge(tempDataSource, filteredItems, newIndex)
-      }
-      setDataSource(tempDataSource)
-      setSelectedItems([])
-    }
+    updateFormdata(
+      arrayMove(
+        formData?.data?.filter((i) => i),
+        oldIndex,
+        newIndex
+      )
+    )
   }
 
-  const DraggableContainer = (props) => (
-    <SortableContainer
-      useDragHandle
-      disableAutoscroll
-      helperclassName="row-dragging"
-      onSortEnd={onSortEnd}
-      {...props}
-    />
-  )
+  const DraggableContainer = (props) => {
+    return (
+      <SortableContainer
+        useDragHandle
+        disableAutoscroll
+        helperclassName="row-dragging"
+        onSortEnd={onSortEnd}
+        {...props}
+      />
+    )
+  }
 
   const DraggableBodyRow = ({ className, style, ...restProps }) => {
     // function findIndex base on Table rowKey props and should always be a right array index
-    const index = dataSource.findIndex(
-      (x) => x.index === restProps["data-row-key"]
-    )
+
+    const id = restProps?.children[0]?.props?.record?.id
+    const index_ = formData?.data?.find((i) => i.id === id)?.position || 0
+
     return (
       <SortableItem
-        index={index}
+        index={index_}
         {...restProps}
         selected={selectedItems.length}
         onClick={(e) => {
           if (e.ctrlKey || e.metaKey) {
-            selectedItems.includes(index)
-              ? selectedItems.splice(selectedItems.indexOf(index), 1)
-              : selectedItems.push(index)
+            selectedItems.includes(index_)
+              ? selectedItems.splice(selectedItems.indexOf(index_), 1)
+              : selectedItems.push(index_)
             setSelectedItems(selectedItems)
           } else {
             setSelectedItems([])
@@ -170,7 +167,7 @@ const DepartmentSurveySettings = ({
         <div className="n__body">
           <h3 className="">Selected departments</h3>
           <span className="card_desc">
-            Total: <strong>{dataSelector?.length} departments</strong>
+            Total: <strong>{formData?.data?.length} departments</strong>
           </span>
           <div className="row">
             <div className="col-lg-12">
@@ -181,8 +178,11 @@ const DepartmentSurveySettings = ({
                 <Table
                   columns={getColumns()}
                   dataSource={
-                    dataSelector?.length > 0
-                      ? dataSelector?.map((i) => ({ ...i, key: i.id }))
+                    formData?.data?.length > 0
+                      ? formData?.data?.map((i) => ({
+                          ...i,
+                          key: i.id,
+                        }))
                       : []
                   }
                   pagination={false}

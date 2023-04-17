@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux"
 import {
   getOtherSurveySetupAction,
   getSurveySetupAction,
+  surveySetupDrawerData,
+  surveySetupFormData,
 } from "../../../../../../../actions/adminActions"
 const LocationSurveySettings = ({
   isLocationSurveyDrawer,
@@ -16,6 +18,39 @@ const LocationSurveySettings = ({
   )
   const surveyId = useSelector((store) => store.saveSurveyId.data)
   const clientId = useSelector((store) => store.saveClientIdForSurveys.data)
+  const [selectedLocationId, setSelectedLocationId] = useState(null)
+
+  useEffect(() => {
+    dispatch(
+      surveySetupDrawerData({
+        attributes: dataSelector?.attributes,
+        locationId: selectedLocationId,
+        allLocations: dataSelector?.allLocations,
+        selectedLocations: dataSelector?.locations,
+        tailored: dataSelector?.tailored,
+      })
+    )
+  }, [selectedLocationId])
+
+  useEffect(() => {
+    dispatch(
+      surveySetupFormData({
+        data: dataSelector.locations,
+        allLocations: dataSelector.allLocations,
+        requestType: "locations",
+        successMessage: "Locations updated successfully",
+      })
+    )
+    dispatch(
+      surveySetupDrawerData({
+        attributes: dataSelector?.attributes,
+        locationId: selectedLocationId,
+        allLocations: dataSelector?.allLocations,
+        selectedLocations: dataSelector?.locations,
+        tailored: dataSelector?.tailored,
+      })
+    )
+  }, [dataSelector.locations])
 
   const getData = () => {
     dispatch(
@@ -76,7 +111,10 @@ const LocationSurveySettings = ({
                 <span className="cxv-delete-l-icn clients_table_drop"></span>
               </button>
               <button
-                onClick={() => setLocationSurveyDrawer(true)}
+                onClick={() => {
+                  setSelectedLocationId(record.id)
+                  setLocationSurveyDrawer(true)
+                }}
                 className="icon__btn"
                 title="Edit"
               >
