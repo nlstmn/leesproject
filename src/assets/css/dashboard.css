@@ -2573,8 +2573,8 @@ body.dark_version.temp__class .ant-table-filter-dropdown .ant-space .ant-btn {
 }
 .drop-menu-new-ul{
   border: 1px solid;
-  padding-left: 4px;
-  border-radius: 9px;
+  padding-left: 26px !important;
+  padding-right: 26px !important;
 }
 
 .n_table
