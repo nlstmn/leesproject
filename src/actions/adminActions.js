@@ -637,11 +637,7 @@ export const saveClientsMainSettingsAction =
 
 export const saveDepartmentsAction =
   (
-    {
-      parentId = "",
-      language = "",
-      name = ""
-    },
+    result,
     clientId
   ) =>
     async (dispatch) => {
@@ -649,11 +645,7 @@ export const saveDepartmentsAction =
       try {
         const response = await axios.post(
           `v2admin/clients/${clientId}/departments`,
-          {
-            parentId,
-            language,
-            data: [{ name: name }]
-          }
+            result
         )
         dispatch({
           type: "SaveDepartments_Success",

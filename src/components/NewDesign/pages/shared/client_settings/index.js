@@ -73,6 +73,7 @@ const ClientSettings = () => {
     document.body.classList.add("temp__class")
   }, [])
 
+
   const [isMenu, setMenu] = useState("Main")
   const [isMenuSub, setMenuSub] = useState(null)
 
@@ -202,17 +203,30 @@ const ClientSettings = () => {
         })
       )
     } else if (isMenuStoreVal === "Departments") {
-      // When the case is saving department values apply these functions
+        function hashCode(str) {
+            let hash = 0;
+            if (str.length === 0) {
+                return hash;
+            }
+            for (let i = 0; i < str.length; i++) {
+                let charCode = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + charCode;
+                hash = hash & hash;
+            }
+            return hash;
+        }
+        const result = treeStruct.map((item) => {
+            const parentId = Math.abs(hashCode(item.name));
+            const data = item.children
+                ? item.children.map((child) => ({ name: child.name }))
+                : [];
+            return { parentId: parentId.toString(), data };
+        });
       window.alert("Department changes have been saved successfully")
-      /* TODO: CHANGE HARDCODED DATA */
       dispatch(
         saveDepartmentsAction(
-          {
-            parentId: "5421",
-            language: "en-GB",
-            data: [{ "name": "elepapps12223" }]
-          },
-          clientId
+            result,
+            clientId
         )
       )
       setSavedMainSettings(true)
